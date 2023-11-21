@@ -27,71 +27,36 @@ public class Quizkampen implements ActionListener {
     private boolean waitingForAlias = false;
 
 
-
     private List<Question> questions;
-    private static final int PORT = 9999;
-    private Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
+
 
     public Quizkampen() {
-        waitingScreen = new WaitingScreen();
+       waitingScreen = new WaitingScreen();
+        showAliasInputPanel();
         initializeQuestions();
         setQuestionnairePanel();
         setQuestionArea();
         setFrame();
         displayQuestion(currentQuestionIndex);
 
-        connectToServer();
 
     }
 
-    private void connectToServer() {
-        try {
-            socket = new Socket("localhost", PORT);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
 
-            connectedToServer = true;
-            showAliasInputPanel();
-            handleGame();
-        } catch (IOException e) {
-            System.out.println("Server connection failed.");
-        }
-    }
-    private void showAliasInputPanel() {
+
+    public void showAliasInputPanel() {
         aliasInputPanel = new AliasInputPanel();
         waitingScreen.closeWindow();
         waitingForAlias = true;
     }
-    private void handleGame() {
-
-        while (currentQuestionIndex < questions.size()) {
-            Question currentQuestion = questions.get(currentQuestionIndex);
-            displayQuestion(currentQuestionIndex);
-
-
-            out.println(currentQuestion.getQuestion());
-
-
-            String receivedAnswer = null;
-            try {
-                receivedAnswer = in.readLine();
-            } catch (IOException e) {
-                System.out.println("Error reading answer from server.");
-            }
 
 
 
-            currentQuestionIndex++;
-        }
-    }
-
-    private void initializeQuestions() {
+    public void initializeQuestions() {
         questions = QuizQuestions.getSampleQuestions();
     }
 
-    private void displayQuestion(int index) {
+    public void displayQuestion(int index) {
         if (index < questions.size()) {
             Question currentQuestion = questions.get(index);
             questionArea.setText(currentQuestion.getQuestion());
@@ -113,12 +78,14 @@ public class Quizkampen implements ActionListener {
 
         QButton clickedButton = (QButton) e.getSource();
         String selectedOption = clickedButton.getText();
-
-
+        System.out.println(selectedOption);
 
 
         currentQuestionIndex++;
         displayQuestion(currentQuestionIndex);
+        String GetAnswer = e.getActionCommand();
+
+
     }
 
     private void setQuestionnairePanel() {
@@ -154,8 +121,5 @@ public class Quizkampen implements ActionListener {
             setPreferredSize(new Dimension(200, 50));
         }
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Quizkampen());
-    }
 }
+

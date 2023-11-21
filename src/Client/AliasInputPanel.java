@@ -29,6 +29,7 @@ public class AliasInputPanel {
             public void actionPerformed(ActionEvent e) {
                 String alias = aliasField.getText();
 
+
                 frame.dispose();
             }
         });
