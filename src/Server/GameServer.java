@@ -10,20 +10,21 @@ public class GameServer {
     private static List<ServerSidePlayer> players = new ArrayList<>();
     private static int connectedPlayers = 0;
 
-    public static void main(String[] args) {
-        try (ServerSocket listener = new ServerSocket(PORT)) {
-            System.out.println("GameServer is running...");
-
+    public static void main(String[] args) throws IOException {
+        ServerSocket listener = new ServerSocket();
+        System.out.println("Game is running...");
+        try {
             while (true) {
-                if (connectedPlayers < 2) {
-                    ServerSidePlayer player = new ServerSidePlayer(listener.accept(), connectedPlayers);
-                    players.add(player);
-                    player.start();
-                    connectedPlayers++;
-                }
+//                ServerSideGame game = new ServerSideGame();
+//
+//                ServerSidePlayer firstPlayer = new ServerSidePlayer();
+//                ServerSidePlayer secondPlayer = new ServerSidePlayer();
+
+
+
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            listener.close();
         }
     }
 }

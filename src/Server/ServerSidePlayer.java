@@ -9,36 +9,66 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ServerSidePlayer extends Thread {
+
     private Socket socket;
     private BufferedReader input;
     private PrintWriter output;
-    private int playerNumber;
+    private ServerSidePlayer opponent;
 
-    public ServerSidePlayer(Socket socket, int playerNumber) {
+    //private int playerNumber;
+
+
+    public ServerSidePlayer(Socket socket, ServerSidePlayer opponent) {
         this.socket = socket;
-        this.playerNumber = playerNumber;
+        this.opponent = opponent;
         try {
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = new PrintWriter(socket.getOutputStream(), true);
             output.println("WELCOME");
-            output.println("MESSAGE Waiting for player " + (playerNumber + 1) + " to enter alias");
+            output.println("MESSAGE Waiting for the other player to connect.");
         } catch (IOException e) {
             System.out.println("Connection lost.");
         }
     }
 
+    public ServerSidePlayer getOpponent() {
+        return opponent;
+    }
+
+    public void setOpponent(ServerSidePlayer opponent) {
+        this.opponent = opponent;
+    }
+
     @Override
     public void run() {
         try {
-            output.println("ENTER_ALIAS");
-            String alias = input.readLine();
-
-            output.println("MESSAGE Welcome, " + alias + "! Game starting...");
-            System.out.println(input.readLine()); // Utläsning från server
+            // The thread is only started after everyone connects.
+            output.println("MESSAGE All players connected");
 
 
+            // Repeatedly get commands from the client and process them.
+            while (true) {
+                String command = input.readLine();
+                if (command.startsWith("MOVE")) {
+//                    int location = Integer.parseInt(command.substring(5));
+//                    if (game.legalMove(location, this)) {
+//                        output.println("VALID_MOVE");
+//                        output.println(game.hasWinner() ? "VICTORY"
+//                                : game.boardFilledUp() ? "TIE"
+//                                : "");
+//                    } else {
+//                        output.println("MESSAGE ?");
+//                    }
+                } else if (command.startsWith("QUIT")) {
+                    return;
+                }
+            }
         } catch (IOException e) {
-            System.out.println("Player disconnected.");
+            System.out.println("Player disconnected: " + e);
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {}
         }
     }
 }
