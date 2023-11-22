@@ -44,6 +44,7 @@ public class ServerSidePlayer extends Thread {
                 answers.add(message);
             }
 
+            System.out.println("List:");
             for (String i : answers) {
                 System.out.println(i);
             }
