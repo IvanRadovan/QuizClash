@@ -33,8 +33,8 @@ public class Quizkampen implements ActionListener {
 
 
     public Quizkampen(MessageSender messageSender) {
-       waitingScreen = new WaitingScreen();
-        showAliasInputPanel();
+       //waitingScreen = new WaitingScreen();
+        //showAliasInputPanel();
         this.messageSender = messageSender;
         initializeQuestions();
         setQuestionnairePanel();
@@ -49,7 +49,7 @@ public class Quizkampen implements ActionListener {
 
     public void showAliasInputPanel() {
         aliasInputPanel = new AliasInputPanel(messageSender);
-        waitingScreen.closeWindow();
+        //waitingScreen.closeWindow();
         waitingForAlias = true;
     }
 
