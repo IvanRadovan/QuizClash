@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Quizkampen implements ActionListener {
+
+    private MessageSender messageSender;
     private JFrame frame = new JFrame("Quizkampen");
     private JTextArea questionArea = new JTextArea();
     private JLabel messageLabel = new JLabel("Welcome to Quizkampen!");
@@ -30,9 +32,10 @@ public class Quizkampen implements ActionListener {
     private List<Question> questions;
 
 
-    public Quizkampen() {
+    public Quizkampen(MessageSender messageSender) {
        waitingScreen = new WaitingScreen();
         showAliasInputPanel();
+        this.messageSender = messageSender;
         initializeQuestions();
         setQuestionnairePanel();
         setQuestionArea();
@@ -45,7 +48,7 @@ public class Quizkampen implements ActionListener {
 
 
     public void showAliasInputPanel() {
-        aliasInputPanel = new AliasInputPanel();
+        aliasInputPanel = new AliasInputPanel(messageSender);
         waitingScreen.closeWindow();
         waitingForAlias = true;
     }
@@ -80,10 +83,11 @@ public class Quizkampen implements ActionListener {
         String selectedOption = clickedButton.getText();
         System.out.println(selectedOption);
 
+        messageSender.sendMessage(selectedOption);
 
         currentQuestionIndex++;
         displayQuestion(currentQuestionIndex);
-        String GetAnswer = e.getActionCommand();
+
 
 
     }

@@ -7,8 +7,11 @@ import java.awt.event.ActionListener;
 
 public class AliasInputPanel {
     private JFrame frame;
+    private MessageSender messageSender;
 
-    public AliasInputPanel() {
+    public AliasInputPanel(MessageSender messageSender) {
+        this.messageSender = messageSender;
+
         frame = new JFrame("Enter Alias");
         frame.setLayout(new BorderLayout());
 
@@ -28,7 +31,8 @@ public class AliasInputPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String alias = aliasField.getText();
-
+                System.out.println("Alias: " + alias);
+                messageSender.sendMessage(alias);
 
                 frame.dispose();
             }

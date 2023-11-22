@@ -34,7 +34,11 @@ public class ServerSidePlayer extends Thread {
             String alias = input.readLine();
 
             output.println("MESSAGE Welcome, " + alias + "! Game starting...");
-            System.out.println(input.readLine()); // Utläsning från server
+
+            while(true) {
+                String message = input.readLine();
+                System.out.println(message);
+            }
 
 
         } catch (IOException e) {
