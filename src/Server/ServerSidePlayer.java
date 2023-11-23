@@ -24,7 +24,11 @@ public class ServerSidePlayer extends Thread {
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             output = new PrintWriter(socket.getOutputStream(), true);
             output.println("WELCOME");
-            output.println("MESSAGE Waiting for player " + (playerNumber + 1) + " to enter alias");
+            //output.println("MESSAGE Waiting for player " + (playerNumber + 1) + " to enter alias");
+            if (playerNumber <2) {
+            output.println("Player " +(playerNumber + 1) +" start");
+            } else
+                output.println("Player " +(playerNumber + 1) +" wait for player 1 to finish");
         } catch (IOException e) {
             System.out.println("Connection lost.");
         }
@@ -37,6 +41,7 @@ public class ServerSidePlayer extends Thread {
             //String alias = input.readLine();
 
             //output.println("MESSAGE Welcome, " + alias + "! Game starting...");
+            output.println("Player 1 can start");
 
             while(answers.size() <2) {
                 String message = input.readLine();
@@ -44,11 +49,13 @@ public class ServerSidePlayer extends Thread {
                 answers.add(message);
             }
 
-            System.out.println("List:");
+            System.out.println("player 1 answer List:");
             for (String i : answers) {
                 System.out.println(i);
             }
             System.out.println("done");
+
+            output.println("player 2 can start");
 
         } catch (IOException e) {
             System.out.println("Player disconnected.");
