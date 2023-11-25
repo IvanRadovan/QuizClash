@@ -1,8 +1,9 @@
-package Client;
-
+package game;
 
 import javax.swing.*;
 import java.awt.*;
+
+// TODO: Maybe we should skip this class altogether for the sake of simplicity
 
 public class WaitingScreen {
     private JFrame frame;
