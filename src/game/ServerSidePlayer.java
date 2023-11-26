@@ -39,6 +39,7 @@ public class ServerSidePlayer extends Thread {
             for (Question currentQuestion : questions) {
                 out.println("QUESTION " + currentQuestion.toString());
                 String command = in.readLine();
+                System.out.println("From client: " + command);
                 if (command.equals(currentQuestion.getCorrectAnswer())) {
                     out.println("CORRECT");
                     gameEngine.addScore(playerMark);
@@ -48,9 +49,9 @@ public class ServerSidePlayer extends Thread {
             }
 
             gameEngine.isDone(playerMark);
-            while (!gameEngine.bothPlayerAreDone()) {}
-            out.println(gameEngine.hasWinner() ? "VICTORY" : "TIE");
-
+            while (!gameEngine.bothPlayerAreDone()) {
+                out.println(gameEngine.hasWinner() ? "VICTORY" : "TIE");
+            }
 
         } catch (IOException e) {
             System.out.println("ServerSidePlayer died: " + e);
