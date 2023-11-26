@@ -34,7 +34,8 @@ public class GameClient implements ActionListener {
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
 
-
+        String alias = JOptionPane.showInputDialog("Enter alias:");
+        frame.setTitle(frame.getTitle() + " " + alias);
         setQuestionnairePanel();
         setQuestionArea();
         setFrame();
@@ -65,7 +66,6 @@ public class GameClient implements ActionListener {
 
     private void setQuestionnairePanel() {
         questionnairePanel.setLayout(new GridLayout(2, 2, 5, 5));
-
         for (int i = 0; i < 4; i++) {
             QButton optionButton = new QButton();
             optionButton.addActionListener(this);
@@ -109,6 +109,7 @@ public class GameClient implements ActionListener {
                     continue;
                 }
 
+                System.out.println(response);
                 if (response.startsWith("QUESTION")) {
                     String[] questionData = response.substring(8).split("/");
                     String question = questionData[0];
@@ -119,14 +120,14 @@ public class GameClient implements ActionListener {
                             .forEach(i -> optionButtons.get(i).setText(options[i]));
                 } else if (response.startsWith("MESSAGE")) {
                     instructionsLabel.setText(response.substring(8));
-                } else if (response.equals("VICTORY")) {
-                    JOptionPane.showMessageDialog(null, "You won!");
+                } else if (response.startsWith("VICTORY")) {
+                    instructionsLabel.setText(response);
                     break;
-                } else if (response.equals("TIE")) {
-                    JOptionPane.showMessageDialog(null, "Tie!");
+                } else if (response.startsWith("TIE")) {
+                    instructionsLabel.setText(response);
                     break;
-                } else if (response.equals("LOSE")) {
-                    JOptionPane.showMessageDialog(null, "You lose!");
+                } else if (response.startsWith("LOSE")) {
+                    instructionsLabel.setText(response);
                     break;
                 }
             }
@@ -134,6 +135,7 @@ public class GameClient implements ActionListener {
             socket.close();
         }
     }
+
 
     class QButton extends JButton {
         public QButton() {

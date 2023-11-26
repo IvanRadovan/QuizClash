@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ServerSidePlayer extends Thread {
 
@@ -48,8 +49,19 @@ public class ServerSidePlayer extends Thread {
             }
 
             gameEngine.isDone(playerMark);
-            while (!gameEngine.bothPlayerAreDone()) {}
-            out.println(gameEngine.hasWinner() ? "VICTORY" : "TIE");
+            while (!gameEngine.bothPlayerAreDone()) {
+                // Will also resolve the "locking" of the waiting players instructions (not showing the result)
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                    out.println("MESSAGE Waiting for other player");
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            out.println(gameEngine.hasWinner()
+                    ? gameEngine.isWinner(playerMark)
+                    ? gameEngine.getScore("VICTORY", playerMark)
+                    : gameEngine.getScore("LOSE", playerMark) : gameEngine.getScore("TIE", playerMark));
 
 
         } catch (IOException e) {

@@ -48,11 +48,11 @@ public class QuizQuestions {
     public List<Question> getSportQuestions() {
         List<Question> list = new ArrayList<>();
         List<String> options1 = List.of("Tennis", "Football", "Basket", "Hockey");
-        Question question1 = new Question("Something sport....", options1, "Paris");
+        Question question1 = new Question("Something sport....", options1, "Tennis");
         list.add(question1);
 
         List<String> options2 = List.of("Tennis", "Football", "Basket", "Hockey");
-        Question question2 = new Question("Something sport....", options1, "Paris");
+        Question question2 = new Question("Something sport....", options2, "Tennis");
         list.add(question2);
 
         return list;
