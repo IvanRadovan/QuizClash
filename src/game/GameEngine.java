@@ -1,5 +1,6 @@
 package game;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -11,6 +12,7 @@ public class GameEngine {
 
     private int playerAScore;
     private int playerBScore;
+    private String selectedCategory;
 
     private boolean playerADone;
     private boolean playerBDone;
@@ -20,6 +22,7 @@ public class GameEngine {
         listOfCategories = questions.getListOfCategories();
         this.playerAScore = 0;
         this.playerBScore = 0;
+        selectRandomCategory();
     }
 
     public void addScore(String playerMark) {
@@ -53,11 +56,28 @@ public class GameEngine {
         return this.playerBScore > this.playerAScore;
     }
 
+
+    // den här kate
     public List<Question> getQuestions() {
-       String randomCategory = listOfCategories.get(new Random().nextInt(0, questions.getCategorySize()));
-       List<Question> randomQuestions = questions.getCategory(randomCategory);
+        if (selectedCategory != null) {
+
+       List<Question> randomQuestions = questions.getCategory(selectedCategory);
+       //String randomCategory = listOfCategories.get(new Random().nextInt(0, questions.getCategorySize()));
        Collections.shuffle(randomQuestions);
        return randomQuestions.stream().limit(3).toList();
+        }
+        return new ArrayList<>();
+    }
+
+    //Ny metod för att välja en random från början
+    //Den väljer bara en kategori om den int
+    private void selectRandomCategory(){
+        if(!listOfCategories.isEmpty()) {
+            Random random = new Random();
+            selectedCategory = listOfCategories.get(random.nextInt(listOfCategories.size()));
+        } else {
+            selectedCategory = null;
+        }
     }
 
     public String getScore(String result, String playerMark) {
