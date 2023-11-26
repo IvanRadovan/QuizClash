@@ -46,10 +46,24 @@ public class GameEngine {
         return this.playerAScore != this.playerBScore;
     }
 
+    public boolean isWinner(String playerMark) {
+        if (playerMark.equals("A")) {
+            return this.playerAScore > this.playerBScore;
+        }
+        return this.playerBScore > this.playerAScore;
+    }
+
     public List<Question> getQuestions() {
        String randomCategory = listOfCategories.get(new Random().nextInt(0, questions.getCategorySize()));
        List<Question> randomQuestions = questions.getCategory(randomCategory);
        Collections.shuffle(randomQuestions);
        return randomQuestions.stream().limit(3).toList();
+    }
+
+    public String getScore(String result, String playerMark) {
+        if (playerMark.equals("A")) {
+            return "%s Score: %s - %s".formatted(result, playerAScore, playerBScore);
+        }
+        return "%s Score: %s - %s".formatted(result, playerBScore, playerAScore);
     }
 }
