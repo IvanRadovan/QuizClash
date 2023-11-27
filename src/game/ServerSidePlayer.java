@@ -23,7 +23,7 @@ public class ServerSidePlayer extends Thread {
             this.playerMark = playerMark;
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.out = new PrintWriter(socket.getOutputStream(), true);
-            out.println("WELCOME");
+            out.println("WELCOME " + playerMark);
             out.println("MESSAGE Waiting for opponent to connect");
 
 
@@ -65,7 +65,7 @@ public class ServerSidePlayer extends Thread {
 
 
         } catch (IOException e) {
-            System.out.println("ServerSidePlayer died: " + e);
+            System.out.println("ServerSidePlayer disconnected: " + e);
         } finally {
             try {
                 socket.close();

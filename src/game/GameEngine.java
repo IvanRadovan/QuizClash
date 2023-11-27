@@ -26,19 +26,13 @@ public class GameEngine {
     }
 
     public void addScore(String playerMark) {
-        if (playerMark.equals("A")) {
-            this.playerAScore++;
-        } else {
-            this.playerBScore++;
-        }
+        if (playerMark.equals("A")) this.playerAScore++;
+        else this.playerBScore++;
     }
 
     public void isDone(String playerMark) {
-        if (playerMark.equals("A")) {
-            playerADone = true;
-        } else {
-            playerBDone = true;
-        }
+        if (playerMark.equals("A")) playerADone = true;
+        else playerBDone = true;
     }
 
     public boolean bothPlayerAreDone() {
@@ -50,29 +44,27 @@ public class GameEngine {
     }
 
     public boolean isWinner(String playerMark) {
-        if (playerMark.equals("A")) {
-            return this.playerAScore > this.playerBScore;
-        }
-        return this.playerBScore > this.playerAScore;
+        return playerMark.equals("A")
+                ? this.playerAScore > this.playerBScore
+                : this.playerBScore > this.playerAScore;
     }
 
 
     // den här kate
     public List<Question> getQuestions() {
         if (selectedCategory != null) {
-
-       List<Question> randomQuestions = questions.getCategory(selectedCategory);
-       //String randomCategory = listOfCategories.get(new Random().nextInt(0, questions.getCategorySize()));
-       Collections.shuffle(randomQuestions);
-       return randomQuestions.stream().limit(3).toList();
+            List<Question> randomQuestions = questions.getCategory(selectedCategory);
+            //String randomCategory = listOfCategories.get(new Random().nextInt(0, questions.getCategorySize()));
+            Collections.shuffle(randomQuestions);
+            return randomQuestions.stream().limit(3).toList();
         }
         return new ArrayList<>();
     }
 
     //Ny metod för att välja en random från början
     //Den väljer bara en kategori om den int
-    private void selectRandomCategory(){
-        if(!listOfCategories.isEmpty()) {
+    private void selectRandomCategory() {
+        if (!listOfCategories.isEmpty()) {
             Random random = new Random();
             selectedCategory = listOfCategories.get(random.nextInt(listOfCategories.size()));
         } else {
@@ -81,9 +73,9 @@ public class GameEngine {
     }
 
     public String getScore(String result, String playerMark) {
-        if (playerMark.equals("A")) {
-            return "%s Score: %s - %s".formatted(result, playerAScore, playerBScore);
-        }
-        return "%s Score: %s - %s".formatted(result, playerBScore, playerAScore);
+        return "%s Score: %s - %s".formatted(
+                result,
+                playerMark.equals("A") ? playerAScore : playerBScore,
+                playerMark.equals("A") ? playerBScore : playerAScore);
     }
 }

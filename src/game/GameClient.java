@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 
 public class GameClient implements ActionListener {
 
-    private JFrame frame = new JFrame("QuizClash");
+    private JFrame frame = new JFrame();
     private JLabel instructionsLabel = new JLabel("Instructions goes here...");
 
     private JLabel questionLabel = new JLabel();
@@ -34,8 +34,6 @@ public class GameClient implements ActionListener {
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
 
-        String alias = JOptionPane.showInputDialog("Enter alias:");
-        frame.setTitle(frame.getTitle() + " " + alias);
         setQuestionnairePanel();
         setQuestionArea();
         setFrame();
@@ -44,24 +42,10 @@ public class GameClient implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         QButton clickedButton = (QButton) e.getSource();
         String selectedOption = clickedButton.getText();
         out.println(selectedOption);
         System.out.println("You clicked " + selectedOption); // For testing
-
-
-//        try {
-//            if ((in.readLine().equals("CORRECT"))) {
-//                clickedButton.setForeground(Color.GREEN);
-//            } else {
-//                clickedButton.setForeground(Color.RED);
-//            }
-//        } catch (IOException ex) {
-//            throw new RuntimeException(ex);
-//        }
-
-
     }
 
     private void setQuestionnairePanel() {
@@ -99,8 +83,9 @@ public class GameClient implements ActionListener {
         try {
             response = in.readLine();
             System.out.println(response);
-            if (response.equals("WELCOME")) {
+            if (response.startsWith("WELCOME")) {
                 instructionsLabel.setText(response);
+                frame.setTitle("QuizClash: Player %S".formatted(response.substring(8)));
             }
             while (true) {
                 response = in.readLine();
