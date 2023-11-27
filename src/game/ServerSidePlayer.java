@@ -14,7 +14,7 @@ public class ServerSidePlayer extends Thread {
     BufferedReader in;
     PrintWriter out;
     Socket socket;
-    String playerMark;
+    public String playerMark;
 
     public ServerSidePlayer(Socket socket, GameEngine gameEngine, String playerMark) {
         try {
@@ -36,33 +36,39 @@ public class ServerSidePlayer extends Thread {
     public void run() {
         try {
             out.println("MESSAGE All players connected");
-            List<Question> questions = gameEngine.getQuestions();
-            for (Question currentQuestion : questions) {
-                out.println("QUESTION " + currentQuestion.toString());
-                String command = in.readLine();
-                if (command.equals(currentQuestion.getCorrectAnswer())) {
-                    out.println("CORRECT");
-                    gameEngine.addScore(playerMark);
-                } else {
-                    out.println("WRONG");
+
+            while (!gameEngine.isGameOver()) {
+                List<Question> questions = gameEngine.getQuestions();
+                for (Question currentQuestion : questions) {
+                    out.println("QUESTION " + currentQuestion.toString());
+                    String command = in.readLine();
+                    if (command.equals(currentQuestion.getCorrectAnswer())) {
+                        out.println("CORRECT");
+                        gameEngine.addScore(playerMark);
+                    } else {
+                        out.println("WRONG");
+                    }
                 }
+
+                gameEngine.isDone(playerMark);
+                while (!gameEngine.bothPlayerAreDone()) {
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                        out.println("MESSAGE Waiting for other player");
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                out.println(gameEngine.hasWinner()
+                        ? gameEngine.isWinner(playerMark)
+                        ? gameEngine.getScore("VICTORY", playerMark)
+                        : gameEngine.getScore("LOSE", playerMark)
+                        : gameEngine.getScore("TIE", playerMark));
+
+                gameEngine.roundsPlayed++; // Increment the rounds played
             }
 
-            gameEngine.isDone(playerMark);
-            while (!gameEngine.bothPlayerAreDone()) {
-                // Will also resolve the "locking" of the waiting players instructions (not showing the result)
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                    out.println("MESSAGE Waiting for other player");
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            out.println(gameEngine.hasWinner()
-                    ? gameEngine.isWinner(playerMark)
-                    ? gameEngine.getScore("VICTORY", playerMark)
-                    : gameEngine.getScore("LOSE", playerMark) : gameEngine.getScore("TIE", playerMark));
-
+            // Game over, perform any necessary actions
 
         } catch (IOException e) {
             System.out.println("ServerSidePlayer died: " + e);
@@ -70,7 +76,7 @@ public class ServerSidePlayer extends Thread {
             try {
                 socket.close();
             } catch (IOException e) {
-
+                // Handle socket closure
             }
         }
     }

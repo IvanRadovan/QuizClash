@@ -1,5 +1,7 @@
 package game;
 
+import Properties.GameProperties;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,12 +19,19 @@ public class GameEngine {
     private boolean playerADone;
     private boolean playerBDone;
 
+
+    private int questionsPerRound;
+    public int roundsPlayed;
+
     public GameEngine() {
         questions = new QuizQuestions();
         listOfCategories = questions.getListOfCategories();
+        GameProperties gameProperties = new GameProperties();
         this.playerAScore = 0;
         this.playerBScore = 0;
         selectRandomCategory();
+        questionsPerRound = gameProperties.getQuestionsPerRound();
+        this.roundsPlayed = 0;
     }
 
     public void addScore(String playerMark) {
@@ -48,6 +57,10 @@ public class GameEngine {
     public boolean hasWinner() {
         return this.playerAScore != this.playerBScore;
     }
+    public boolean isGameOver() {
+        GameProperties gameProperties = new GameProperties();
+        return roundsPlayed >= gameProperties.getRounds();
+    }
 
     public boolean isWinner(String playerMark) {
         if (playerMark.equals("A")) {
@@ -60,18 +73,16 @@ public class GameEngine {
     // den här kate
     public List<Question> getQuestions() {
         if (selectedCategory != null) {
-
-       List<Question> randomQuestions = questions.getCategory(selectedCategory);
-       //String randomCategory = listOfCategories.get(new Random().nextInt(0, questions.getCategorySize()));
-       Collections.shuffle(randomQuestions);
-       return randomQuestions.stream().limit(3).toList();
+            List<Question> randomQuestions = questions.getCategory(selectedCategory);
+            Collections.shuffle(randomQuestions);
+            return randomQuestions.stream().limit(questionsPerRound).toList();
         }
         return new ArrayList<>();
     }
 
     //Ny metod för att välja en random från början
     //Den väljer bara en kategori om den int
-    private void selectRandomCategory(){
+    public void selectRandomCategory(){
         if(!listOfCategories.isEmpty()) {
             Random random = new Random();
             selectedCategory = listOfCategories.get(random.nextInt(listOfCategories.size()));

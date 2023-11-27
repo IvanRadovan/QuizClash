@@ -1,5 +1,7 @@
 package game;
 
+import Properties.GameProperties;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -28,6 +30,11 @@ public class GameClient implements ActionListener {
     private PrintWriter out;
     private Socket socket;
 
+    private GameProperties gameProperties;
+    private int roundsPlayed;
+
+    private GameEngine gameEngine;
+
 
     public GameClient() throws IOException {
         socket = new Socket("localhost", 9999);
@@ -39,6 +46,10 @@ public class GameClient implements ActionListener {
         setQuestionnairePanel();
         setQuestionArea();
         setFrame();
+        gameProperties = new GameProperties();
+        roundsPlayed = 0;
+        gameEngine = new GameEngine();
+
     }
 
 
@@ -96,45 +107,54 @@ public class GameClient implements ActionListener {
     public void play() throws IOException {
         String response;
 
-        try {
-            response = in.readLine();
-            System.out.println(response);
-            if (response.equals("WELCOME")) {
-                instructionsLabel.setText(response);
-            }
-            while (true) {
+        while (roundsPlayed < gameProperties.getRounds()) {
+            try {
                 response = in.readLine();
+                System.out.println(response);
+
                 if (response == null) {
                     instructionsLabel.setText("Waiting for server");
                     continue;
                 }
 
-                System.out.println(response);
-                if (response.startsWith("QUESTION")) {
-                    String[] questionData = response.substring(8).split("/");
-                    String question = questionData[0];
-                    String[] options = questionData[1].split(",");
-                    instructionsLabel.setText("Choose an option");
-                    questionLabel.setText(question);
-                    IntStream.range(0, optionButtons.size())
-                            .forEach(i -> optionButtons.get(i).setText(options[i]));
-                } else if (response.startsWith("MESSAGE")) {
-                    instructionsLabel.setText(response.substring(8));
-                } else if (response.startsWith("VICTORY")) {
+                if (response.equals("WELCOME")) {
                     instructionsLabel.setText(response);
-                    break;
-                } else if (response.startsWith("TIE")) {
-                    instructionsLabel.setText(response);
-                    break;
-                } else if (response.startsWith("LOSE")) {
-                    instructionsLabel.setText(response);
-                    break;
                 }
+
+                List<Question> questions = gameEngine.getQuestions(); // Fetch new questions
+                while (true) {
+                    response = in.readLine();
+                    if (response == null) {
+                        instructionsLabel.setText("Waiting for server");
+                        continue;
+                    }
+
+                    System.out.println(response);
+
+                    if (response.startsWith("QUESTION")) {
+                        String[] questionData = response.substring(8).split("/");
+                        String question = questionData[0];
+                        String[] options = questionData[1].split(",");
+                        instructionsLabel.setText("Choose an option");
+                        questionLabel.setText(question);
+                        IntStream.range(0, optionButtons.size())
+                                .forEach(i -> optionButtons.get(i).setText(options[i]));
+
+                        break; // Break the inner loop to wait for user input
+                    } else if (response.startsWith("MESSAGE")) {
+                        instructionsLabel.setText(response.substring(8));
+                    } else if (response.startsWith("VICTORY") || response.startsWith("TIE") || response.startsWith("LOSE")) {
+                        instructionsLabel.setText(response);
+                        roundsPlayed++; // Increment rounds played
+                        break; // Break the inner loop to wait for next round or game end
+                    }
+                }
+            } finally {
+                // Add any necessary cleanup or finalization steps
             }
-        } finally {
-            socket.close();
         }
     }
+
 
 
     class QButton extends JButton {

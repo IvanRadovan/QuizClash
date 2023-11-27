@@ -1,0 +1,5 @@
+# Set rounds
+rounds=2
+
+# Set questions per round
+questions_per_round=2
