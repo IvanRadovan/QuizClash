@@ -16,6 +16,14 @@ public class ServerSidePlayer extends Thread {
     Socket socket;
     public String playerMark;
 
+    private boolean gameOver = false;
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+
+
     public ServerSidePlayer(Socket socket, GameEngine gameEngine, String playerMark) {
         try {
             this.socket = socket;
@@ -25,8 +33,6 @@ public class ServerSidePlayer extends Thread {
             this.out = new PrintWriter(socket.getOutputStream(), true);
             out.println("WELCOME");
             out.println("MESSAGE Waiting for opponent to connect");
-
-
         } catch (IOException e) {
             System.out.println("Player disconnected: " + e.getMessage());
         }
@@ -65,10 +71,17 @@ public class ServerSidePlayer extends Thread {
                         : gameEngine.getScore("LOSE", playerMark)
                         : gameEngine.getScore("TIE", playerMark));
 
-                gameEngine.roundsPlayed++; // Increment the rounds played
+                gameEngine.roundsPlayed++;
+
+
+                String exitSignal = in.readLine();
+                if (exitSignal != null && exitSignal.equals("EXIT")) {
+                    gameEngine.isGameOver(); // Set the game as over
+                    break; // Exit the loop
+                }
             }
 
-            // Game over, perform any necessary actions
+
 
         } catch (IOException e) {
             System.out.println("ServerSidePlayer died: " + e);
@@ -80,6 +93,7 @@ public class ServerSidePlayer extends Thread {
             }
         }
     }
-
-
 }
+
+
+

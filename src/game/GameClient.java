@@ -104,10 +104,13 @@ public class GameClient implements ActionListener {
     }
 
 
+
+
     public void play() throws IOException {
         String response;
 
-        while (roundsPlayed < gameProperties.getRounds()) {
+
+        while (roundsPlayed < 2 || !gameEngine.isGameOver()) {
             try {
                 response = in.readLine();
                 System.out.println(response);
@@ -121,7 +124,7 @@ public class GameClient implements ActionListener {
                     instructionsLabel.setText(response);
                 }
 
-                List<Question> questions = gameEngine.getQuestions(); // Fetch new questions
+                List<Question> questions = gameEngine.getQuestions();
                 while (true) {
                     response = in.readLine();
                     if (response == null) {
@@ -140,20 +143,32 @@ public class GameClient implements ActionListener {
                         IntStream.range(0, optionButtons.size())
                                 .forEach(i -> optionButtons.get(i).setText(options[i]));
 
-                        break; // Break the inner loop to wait for user input
                     } else if (response.startsWith("MESSAGE")) {
                         instructionsLabel.setText(response.substring(8));
                     } else if (response.startsWith("VICTORY") || response.startsWith("TIE") || response.startsWith("LOSE")) {
                         instructionsLabel.setText(response);
-                        roundsPlayed++; // Increment rounds played
-                        break; // Break the inner loop to wait for next round or game end
+                        roundsPlayed++;
+
+
+                        instructionsLabel.setText(instructionsLabel.getText() + "\n" + gameEngine.getScore("", "A"));
+                        instructionsLabel.setText(instructionsLabel.getText() + "\n" + gameEngine.getScore("", "B"));
+
+                        if (roundsPlayed >= 2) {
+                            out.println("EXIT");
+                            break; // Exit loop to end the game
+                        }
                     }
+                }
+
+                if (roundsPlayed >= 2) {
+                    break;
                 }
             } finally {
                 // Add any necessary cleanup or finalization steps
             }
         }
     }
+
 
 
 

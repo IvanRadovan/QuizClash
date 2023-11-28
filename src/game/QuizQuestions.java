@@ -12,7 +12,7 @@ public class QuizQuestions {
     public QuizQuestions() {
         listCategory.put("Geography", getGeographyQuestions());
         listCategory.put("Space", getSpaceQuestions());
-        listCategory.put("Sport", getSportQuestions());
+       // listCategory.put("Sport", getSportQuestions());
     }
 
     public List<Question> getGeographyQuestions() {
@@ -45,7 +45,7 @@ public class QuizQuestions {
         return list;
     }
 
-    public List<Question> getSportQuestions() {
+  /*  public List<Question> getSportQuestions() {
         List<Question> list = new ArrayList<>();
         List<String> options1 = List.of("Tennis", "Football", "Basket", "Hockey");
         Question question1 = new Question("Something sport....", options1, "Tennis");
@@ -58,21 +58,13 @@ public class QuizQuestions {
         return list;
     }
 
+   */
+
     public List<Question> getCategory(String category) {
         return listCategory.get(category);
     }
 
-    public Question getNextQuestion(String category, int position) {
-        return getCategory(category).get(position);
-    }
 
-    public int getCategorySize(String category) {
-        return getCategory(category).size();
-    }
-
-    public int getCategorySize() {
-        return listCategory.size();
-    }
 
     public List<String> getListOfCategories() {
         return listCategory.keySet()

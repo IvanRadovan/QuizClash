@@ -59,7 +59,7 @@ public class GameEngine {
     }
     public boolean isGameOver() {
         GameProperties gameProperties = new GameProperties();
-        return roundsPlayed >= gameProperties.getRounds();
+        return roundsPlayed >= gameProperties.getRounds() * 2;
     }
 
     public boolean isWinner(String playerMark) {
