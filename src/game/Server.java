@@ -19,8 +19,8 @@ public class Server {
                 ServerSidePlayer serverSidePlayerA = new ServerSidePlayer(listener.accept());
                 ServerSidePlayer serverSidePlayerB = new ServerSidePlayer(listener.accept());
 
-                Match match = new Match(serverSidePlayerA, serverSidePlayerB, gameEngine, listener);
-                match.run();
+                Match match = new Match(serverSidePlayerA, serverSidePlayerB, gameEngine);
+                match.start();
             }
 
         } catch (IOException e) {

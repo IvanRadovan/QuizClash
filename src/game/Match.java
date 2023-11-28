@@ -8,7 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 
-public class Match {
+public class Match extends Thread{
 
     ServerSidePlayer playerA;
     ServerSidePlayer playerB;
@@ -19,14 +19,14 @@ public class Match {
 
     BufferedReader fromClient;
 
-    public Match(ServerSidePlayer playerA, ServerSidePlayer playerB, GameEngine gameEngine, ServerSocket socket) {
+    public Match(ServerSidePlayer playerA, ServerSidePlayer playerB, GameEngine gameEngine) {
         try {
 
             this.playerA = playerA;
             this.playerB = playerB;
             this.gameEngine = gameEngine;
 
-            BufferedReader fromClient = new BufferedReader(new InputStreamReader(socket.accept().getInputStream()));
+           // BufferedReader fromClient = new BufferedReader(new InputStreamReader(socket.accept().getInputStream()));
 
             playerA.out.println("WELCOME ");
             playerA.out.println("MESSAGE Waiting for opponent to connect");
@@ -35,7 +35,7 @@ public class Match {
             playerB.out.println("MESSAGE Waiting for opponent to connect");
 
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Player disconnected: " + e.getMessage());
         }
     }
@@ -47,7 +47,14 @@ public class Match {
 
             playerB.out.println("MESSAGE All players connected");
 
-
+           //todo skicka kategorier till spelare a
+            //todo ta emot kategorier fr spelare a
+            //todo skicka frågor till spelare a
+            // todo ta emot frågor fr spelare a
+            //todo skicka frågor till spelare b
+            //todo ta emot svar fr spelare b
+            //kolla resultat
+            // skica resultat
             while (gameEngine.getCurrentRound() < gameEngine.getTotalRounds()) {
 
 
