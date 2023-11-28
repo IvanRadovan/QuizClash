@@ -1,125 +1,92 @@
 package game;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-public class Match extends Thread{
+public class Match extends Thread {
 
     ServerSidePlayer playerA;
     ServerSidePlayer playerB;
-
     GameEngine gameEngine;
-    BufferedReader in;
-    String playerMark;
-
-    BufferedReader fromClient;
 
     public Match(ServerSidePlayer playerA, ServerSidePlayer playerB, GameEngine gameEngine) {
         try {
-
             this.playerA = playerA;
             this.playerB = playerB;
             this.gameEngine = gameEngine;
 
-           // BufferedReader fromClient = new BufferedReader(new InputStreamReader(socket.accept().getInputStream()));
-
-            playerA.out.println("WELCOME ");
-            playerA.out.println("MESSAGE Waiting for opponent to connect");
-
-            playerB.out.println("WELCOME ");
-            playerB.out.println("MESSAGE Waiting for opponent to connect");
-
-
+            playerA.out.println("WELCOME " + playerA.getPlayerMark());
+            playerB.out.println("WELCOME " + playerB.getPlayerMark());
         } catch (Exception e) {
             System.out.println("Player disconnected: " + e.getMessage());
         }
     }
 
 
-    public void run() {
-        try {
-            playerA.out.println("MESSAGE All players connected");
-
-            playerB.out.println("MESSAGE All players connected");
-
-           //todo skicka kategorier till spelare a
-            //todo ta emot kategorier fr spelare a
-            //todo skicka frågor till spelare a
-            // todo ta emot frågor fr spelare a
-            //todo skicka frågor till spelare b
-            //todo ta emot svar fr spelare b
-            //kolla resultat
-            // skica resultat
-            while (gameEngine.getCurrentRound() < gameEngine.getTotalRounds()) {
-
-
-                //player A
-
-                //System.out.println("Runda: " + gameEngine.getCurrentRound()+" "+playerMark);
-                List<Question> questions = gameEngine.getQuestions();
-                for (Question currentQuestion : questions) {
-                    playerA.out.println("Answer: " + currentQuestion.getCorrectAnswer());
-                    playerA.out.println("QUESTION " + currentQuestion.toString());
-                    String command = fromClient.readLine();
-                    if (command.equals(currentQuestion.getCorrectAnswer())) {
-                        playerA.out.println("CORRECT");
-                        gameEngine.addScore(playerMark);
-                    } else {
-                        playerA.out.println("WRONG");
-                    }
-                }
-
-                //player B
-
-                for (Question currentQuestion : questions) {
-                    playerA.out.println("Answer: " + currentQuestion.getCorrectAnswer());
-                    playerA.out.println("QUESTION " + currentQuestion.toString());
-                    String command = fromClient.readLine();
-                    if (command.equals(currentQuestion.getCorrectAnswer())) {
-                        playerA.out.println("CORRECT");
-                        gameEngine.addScore(playerMark);
-                    } else {
-                        playerA.out.println("WRONG");
-                    }
-                }
-
-                // Will also resolve the "locking" of the waiting players instructions (not showing the result)
-                    /*try {
-                        //TimeUnit.SECONDS.sleep(1);
-                        Thread.sleep(100);
-                        playerA.out.println("MESSAGE Waiting for other player");
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }*/
+    private void sendRoundExecutor(ServerSidePlayer player, List<Question> questions) {
+        player.out.println("%S Category: %s".formatted("MESSAGE", gameEngine.getCategoryName()));
+        for (Question currentQuestion : questions) {
+            player.out.println("QUESTION " + currentQuestion);
+            String command;
+            try {
+                command = player.in.readLine();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            while (gameEngine.bothPlayerAreDone()) {
-                if (!gameEngine.isFinalRound()) {
-                    gameEngine.nextRound();
-                    System.out.println("runda" + gameEngine.getCurrentRound() + playerMark);
-                    gameEngine.setPlayerADone(false);
-                    gameEngine.setPlayerBDone(false);
-                }
-                break;
+            if (command.equals(currentQuestion.getCorrectAnswer())) {
+                player.out.println("CORRECT");
+                gameEngine.addScore(player.getPlayerMark());
+            } else {
+                player.out.println("WRONG");
             }
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
         }
+        player.out.println("WAITING ");
+    }
 
-        playerA.out.println(gameEngine.hasWinner()
-                ? gameEngine.isWinner(playerMark)
-                ? gameEngine.getScore("VICTORY", playerMark)
-                : gameEngine.getScore("LOSE", playerMark) : gameEngine.getScore("TIE", playerMark));
+    private void sendRoundScore(ServerSidePlayer player) {
+        player.out.println(gameEngine.getRoundScore("MESSAGE ", player.getPlayerMark()));
+    }
 
-        playerB.out.println(gameEngine.hasWinner()
-                ? gameEngine.isWinner(playerMark)
-                ? gameEngine.getScore("VICTORY", playerMark)
-                : gameEngine.getScore("LOSE", playerMark) : gameEngine.getScore("TIE", playerMark));
+    private void sendTotalScore(ServerSidePlayer player) {
+        player.out.println(gameEngine.hasWinner()
+                ? gameEngine.isWinner(player.playerMark)
+                ? gameEngine.getTotalScore("VICTORY", player.playerMark)
+                : gameEngine.getTotalScore("LOSE", player.playerMark) : gameEngine.getTotalScore("TIE", player.playerMark));
+    }
 
+    private void sendCurrentRound(ServerSidePlayer player) {
+        player.out.println("MESSAGE Round: " + (gameEngine.getCurrentRound() + 1));
+    }
 
+    public void run() {
+        while (!gameEngine.isGameFinished()) {
+            sendCurrentRound(playerA);
+            sendCurrentRound(playerB);
+
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            List<Question> questions = gameEngine.getQuestions();
+
+            sendRoundExecutor(playerA, questions);
+            sendRoundExecutor(playerB, questions);
+
+            sendRoundScore(playerA);
+            sendRoundScore(playerB);
+
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            gameEngine.nextRound();
+        }
+        sendTotalScore(playerA);
+        sendTotalScore(playerB);
     }
 }

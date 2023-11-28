@@ -9,92 +9,64 @@ public class GameEngine {
 
     public QuizQuestions questions;
     public List<String> listOfCategories;
-
-    private int playerAScore;
-    private int playerBScore;
     private String selectedCategory;
 
-    private int currentRound= 0;
-    private int totalRounds = 3;
-    private boolean playerADone;
-    private boolean playerBDone;
+    private int currentRound;
+    private final int totalRounds = 3;
 
-    public boolean isPlayerADone() {
-        return playerADone;
-    }
+    private int playerATotalScore;
+    private int playerBTotalScore;
 
-    public void setPlayerADone(boolean playerADone) {
-        this.playerADone = playerADone;
-    }
+    private int playerARoundScore;
+    private int playerBRoundScore;
 
-    public boolean isPlayerBDone() {
-        return playerBDone;
-    }
-
-    public void setPlayerBDone(boolean playerBDone) {
-        this.playerBDone = playerBDone;
+    public GameEngine() {
+        questions = new QuizQuestions();
+        listOfCategories = questions.getListOfCategories();
+        selectRandomCategory();
     }
 
     public int getCurrentRound() {
         return currentRound;
     }
 
-    public int getTotalRounds() {
-        return totalRounds;
-    }
-
-    public GameEngine() {
-        questions = new QuizQuestions();
-        listOfCategories = questions.getListOfCategories();
-        this.playerAScore = 0;
-        this.playerBScore = 0;
-        selectRandomCategory();
-    }
-
     public void addScore(String playerMark) {
-        if (playerMark.equals("A")) this.playerAScore++;
-        else this.playerBScore++;
-    }
-
-    public void isDone(String playerMark) {
-        if (playerMark.equals("A")) playerADone = true;
-        else playerBDone = true;
-    }
-
-    public boolean bothPlayerAreDone() {
-        return (playerADone && playerBDone);
-    }
-
-    public boolean bothPlayerNotDone() {
-        return (!playerADone && !playerBDone);
+        if (playerMark.equals("A")) {
+            playerARoundScore++;
+            playerATotalScore++;
+        } else {
+            playerBTotalScore++;
+            playerBRoundScore++;
+        }
     }
 
     public boolean hasWinner() {
-        return this.playerAScore != this.playerBScore;
+        return playerATotalScore != playerBTotalScore;
     }
 
     public void nextRound() {
         if (currentRound < totalRounds) {
             currentRound++;
+            playerARoundScore = 0;
+            playerBRoundScore = 0;
             selectRandomCategory();
         }
     }
-    public boolean isFinalRound() {
-        return currentRound == totalRounds;
+
+    public boolean isGameFinished() {
+        return currentRound >= totalRounds;
     }
 
     public boolean isWinner(String playerMark) {
         return playerMark.equals("A")
-                ? this.playerAScore > this.playerBScore
-                : this.playerBScore > this.playerAScore;
+                ? playerATotalScore > playerBTotalScore
+                : playerBTotalScore > playerATotalScore;
     }
-
 
     // den här kate
     public List<Question> getQuestions() {
         if (selectedCategory != null) {
             List<Question> randomQuestions = questions.getCategory(selectedCategory);
-            //String randomCategory = listOfCategories.get(new Random().nextInt(0, questions.getCategorySize()));
             Collections.shuffle(randomQuestions);
             return randomQuestions.stream().limit(3).toList();
         }
@@ -112,10 +84,21 @@ public class GameEngine {
         }
     }
 
-    public String getScore(String result, String playerMark) {
+    public String getCategoryName() {
+        return selectedCategory;
+    }
+
+    public String getTotalScore(String result, String playerMark) {
         return "%s Score: %s - %s".formatted(
                 result,
-                playerMark.equals("A") ? playerAScore : playerBScore,
-                playerMark.equals("A") ? playerBScore : playerAScore);
+                playerMark.equals("A") ? playerATotalScore : playerBTotalScore,
+                playerMark.equals("A") ? playerBTotalScore : playerATotalScore);
+    }
+
+    public String getRoundScore(String result, String playerMark) {
+        return "%s Score: %s - %s".formatted(
+                result,
+                playerMark.equals("A") ? playerARoundScore : playerBRoundScore,
+                playerMark.equals("A") ? playerBRoundScore : playerARoundScore);
     }
 }

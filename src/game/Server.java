@@ -16,8 +16,8 @@ public class Server {
 
                 GameEngine gameEngine = new GameEngine();
 
-                ServerSidePlayer serverSidePlayerA = new ServerSidePlayer(listener.accept());
-                ServerSidePlayer serverSidePlayerB = new ServerSidePlayer(listener.accept());
+                ServerSidePlayer serverSidePlayerA = new ServerSidePlayer(listener.accept(), "A");
+                ServerSidePlayer serverSidePlayerB = new ServerSidePlayer(listener.accept(), "B");
 
                 Match match = new Match(serverSidePlayerA, serverSidePlayerB, gameEngine);
                 match.start();

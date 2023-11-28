@@ -62,22 +62,10 @@ public class QuizQuestions {
         return listCategory.get(category);
     }
 
-    public Question getNextQuestion(String category, int position) {
-        return getCategory(category).get(position);
-    }
-
-    public int getCategorySize(String category) {
-        return getCategory(category).size();
-    }
-
-    public int getCategorySize() {
-        return listCategory.size();
-    }
 
     public List<String> getListOfCategories() {
         return listCategory.keySet()
                 .stream()
                 .toList();
     }
-
 }
