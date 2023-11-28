@@ -19,6 +19,10 @@ public class Server {
                 ServerSidePlayer serverSidePlayerA = new ServerSidePlayer(listener.accept(), gameEngine, "A");
                 ServerSidePlayer serverSidePlayerB = new ServerSidePlayer(listener.accept(), gameEngine, "B");
 
+                serverSidePlayerA.setOpponent(serverSidePlayerB);
+                serverSidePlayerB.setOpponent(serverSidePlayerA);
+                gameEngine.setCurrentPlayer(serverSidePlayerA);
+
                 serverSidePlayerA.start();
                 serverSidePlayerB.start();
             }

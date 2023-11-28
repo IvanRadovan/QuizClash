@@ -16,6 +16,16 @@ public class ServerSidePlayer extends Thread {
     Socket socket;
     String playerMark;
 
+    ServerSidePlayer opponent;
+
+    public ServerSidePlayer getOpponent() {
+        return opponent;
+    }
+
+    public void setOpponent(ServerSidePlayer opponent) {
+        this.opponent = opponent;
+    }
+
     public ServerSidePlayer(Socket socket, GameEngine gameEngine, String playerMark) {
         try {
             this.socket = socket;
@@ -25,8 +35,6 @@ public class ServerSidePlayer extends Thread {
             this.out = new PrintWriter(socket.getOutputStream(), true);
             out.println("WELCOME " + playerMark);
             out.println("MESSAGE Waiting for opponent to connect");
-
-
         } catch (IOException e) {
             System.out.println("Player disconnected: " + e.getMessage());
         }
@@ -37,7 +45,9 @@ public class ServerSidePlayer extends Thread {
         try {
             out.println("MESSAGE All players connected");
             List<Question> questions = gameEngine.getQuestions();
-            for (Question currentQuestion : questions) {
+
+            for (int i = 0; i < questions.size(); i++) {
+                Question currentQuestion = questions.get(i);
                 out.println("QUESTION " + currentQuestion.toString());
                 String command = in.readLine();
                 if (command.equals(currentQuestion.getCorrectAnswer())) {
@@ -47,6 +57,8 @@ public class ServerSidePlayer extends Thread {
                     out.println("WRONG");
                 }
             }
+            out.println("OPPONENT_DONE ");
+
 
             gameEngine.isDone(playerMark);
             while (!gameEngine.bothPlayerAreDone()) {
@@ -65,7 +77,7 @@ public class ServerSidePlayer extends Thread {
 
 
         } catch (IOException e) {
-            System.out.println("ServerSidePlayer disconnected: " + e);
+            System.out.println("Player disconnected: " + e);
         } finally {
             try {
                 socket.close();

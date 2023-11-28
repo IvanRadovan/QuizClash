@@ -94,7 +94,6 @@ public class GameClient implements ActionListener {
                     continue;
                 }
 
-                System.out.println(response);
                 if (response.startsWith("QUESTION")) {
                     String[] questionData = response.substring(8).split("/");
                     String question = questionData[0];
@@ -103,6 +102,9 @@ public class GameClient implements ActionListener {
                     questionLabel.setText(question);
                     IntStream.range(0, optionButtons.size())
                             .forEach(i -> optionButtons.get(i).setText(options[i]));
+                } else if (response.startsWith("OPPONENT_DONE")) {
+                    questionLabel.setText("");
+                    optionButtons.forEach(button -> button.setText(""));
                 } else if (response.startsWith("MESSAGE")) {
                     instructionsLabel.setText(response.substring(8));
                 } else if (response.startsWith("VICTORY")) {

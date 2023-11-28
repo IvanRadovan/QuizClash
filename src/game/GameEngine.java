@@ -7,15 +7,17 @@ import java.util.Random;
 
 public class GameEngine {
 
-    public QuizQuestions questions;
-    public List<String> listOfCategories;
+    private QuizQuestions questions;
+    private List<String> listOfCategories;
+    private String selectedCategory;
 
     private int playerAScore;
     private int playerBScore;
-    private String selectedCategory;
 
     private boolean playerADone;
     private boolean playerBDone;
+
+    private ServerSidePlayer currentPlayer;
 
     public GameEngine() {
         questions = new QuizQuestions();
@@ -25,14 +27,25 @@ public class GameEngine {
         selectRandomCategory();
     }
 
+    public ServerSidePlayer getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(ServerSidePlayer currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+
     public void addScore(String playerMark) {
-        if (playerMark.equals("A")) this.playerAScore++;
-        else this.playerBScore++;
+        if (playerMark.equals("A")) playerAScore++;
+        else playerBScore++;
     }
 
     public void isDone(String playerMark) {
-        if (playerMark.equals("A")) playerADone = true;
-        else playerBDone = true;
+        if (playerMark.equals("A"))
+            playerADone = true;
+        else
+            playerBDone = true;
     }
 
     public boolean bothPlayerAreDone() {
@@ -40,14 +53,15 @@ public class GameEngine {
     }
 
     public boolean hasWinner() {
-        return this.playerAScore != this.playerBScore;
+        return playerAScore != playerBScore;
     }
 
     public boolean isWinner(String playerMark) {
         return playerMark.equals("A")
-                ? this.playerAScore > this.playerBScore
-                : this.playerBScore > this.playerAScore;
+                ? playerAScore > playerBScore
+                : playerBScore > playerAScore;
     }
+
 
 
     // den här kate
