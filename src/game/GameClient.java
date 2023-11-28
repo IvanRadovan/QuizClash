@@ -20,7 +20,7 @@ public class GameClient implements ActionListener {
 
     private JLabel questionLabel = new JLabel();
     private JPanel questionnairePanel = new JPanel();
-
+    private String correctAnswer;
     private List<QButton> optionButtons = new ArrayList<>();
 
 
@@ -46,6 +46,14 @@ public class GameClient implements ActionListener {
         String selectedOption = clickedButton.getText();
         out.println(selectedOption);
         System.out.println("You clicked " + selectedOption); // For testing
+
+        if (selectedOption.equalsIgnoreCase(correctAnswer)){
+            clickedButton.setBackground(Color.green);
+        } else {
+            System.out.println("From client: wrong");
+
+        }
+
     }
 
     private void setQuestionnairePanel() {
@@ -88,13 +96,18 @@ public class GameClient implements ActionListener {
                 frame.setTitle("QuizClash: Player %S".formatted(response.substring(8)));
             }
             while (true) {
+                correctAnswer = null;
                 response = in.readLine();
                 if (response == null) {
                     instructionsLabel.setText("Waiting for server");
                     continue;
                 }
+                if (correctAnswer == null) {
+                correctAnswer = response;
+                }
 
-                System.out.println(response);
+                System.out.println("From client: " + correctAnswer);
+
                 if (response.startsWith("QUESTION")) {
                     String[] questionData = response.substring(8).split("/");
                     String question = questionData[0];

@@ -35,29 +35,40 @@ public class ServerSidePlayer extends Thread {
 
     public void run() {
         try {
-            out.println("MESSAGE All players connected");
-            List<Question> questions = gameEngine.getQuestions();
-            for (Question currentQuestion : questions) {
-                out.println("QUESTION " + currentQuestion.toString());
-                String command = in.readLine();
-                if (command.equals(currentQuestion.getCorrectAnswer())) {
-                    out.println("CORRECT");
-                    gameEngine.addScore(playerMark);
-                } else {
-                    out.println("WRONG");
+                out.println("MESSAGE All players connected");
+
+            while(gameEngine.getCurrentRound() < gameEngine.getTotalRounds()) {
+                //System.out.println("Runda: " + gameEngine.getCurrentRound()+" "+playerMark);
+                List<Question> questions = gameEngine.getQuestions();
+                for (Question currentQuestion : questions) {
+                    out.println("Answer: " + currentQuestion.getCorrectAnswer());
+                    out.println("QUESTION " + currentQuestion.toString());
+                    String command = in.readLine();
+                    if (command.equals(currentQuestion.getCorrectAnswer())) {
+                        out.println("CORRECT");
+                        gameEngine.addScore(playerMark);
+                    } else {
+                        out.println("WRONG");
+                    }
+                }
+
+                gameEngine.isDone(playerMark);
+                while (!gameEngine.bothPlayerAreDone()) {
+
+                        if (!gameEngine.isFinalRound()) {
+                            gameEngine.nextRound();
+                            System.out.println("runda" + gameEngine.getCurrentRound() + playerMark);
+                        }
+                    // Will also resolve the "locking" of the waiting players instructions (not showing the result)
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                        out.println("MESSAGE Waiting for other player");
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
-            gameEngine.isDone(playerMark);
-            while (!gameEngine.bothPlayerAreDone()) {
-                // Will also resolve the "locking" of the waiting players instructions (not showing the result)
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                    out.println("MESSAGE Waiting for other player");
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
             out.println(gameEngine.hasWinner()
                     ? gameEngine.isWinner(playerMark)
                     ? gameEngine.getScore("VICTORY", playerMark)

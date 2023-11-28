@@ -14,8 +14,18 @@ public class GameEngine {
     private int playerBScore;
     private String selectedCategory;
 
+    private int currentRound= 0;
+    private int totalRounds = 3;
     private boolean playerADone;
     private boolean playerBDone;
+
+    public int getCurrentRound() {
+        return currentRound;
+    }
+
+    public int getTotalRounds() {
+        return totalRounds;
+    }
 
     public GameEngine() {
         questions = new QuizQuestions();
@@ -41,6 +51,16 @@ public class GameEngine {
 
     public boolean hasWinner() {
         return this.playerAScore != this.playerBScore;
+    }
+
+    public void nextRound() {
+        if (currentRound < totalRounds) {
+            currentRound++;
+            selectRandomCategory();
+        }
+    }
+    public boolean isFinalRound() {
+        return currentRound == totalRounds;
     }
 
     public boolean isWinner(String playerMark) {

@@ -12,7 +12,7 @@ public class QuizQuestions {
     public QuizQuestions() {
         listCategory.put("Geography", getGeographyQuestions());
         listCategory.put("Space", getSpaceQuestions());
-        listCategory.put("Sport", getSportQuestions());
+        //listCategory.put("Sport", getSportQuestions());
     }
 
     public List<Question> getGeographyQuestions() {
