@@ -16,13 +16,12 @@ import java.util.stream.IntStream;
 public class GameClient implements ActionListener {
 
     private JFrame frame = new JFrame();
-    private JLabel instructionsLabel = new JLabel("Instructions goes here...");
+    private JLabel instructionsLabel = new JLabel("Waiting for opponent to connect...");
 
     private JLabel questionLabel = new JLabel();
     private JPanel questionnairePanel = new JPanel();
-
+    private String correctAnswer;
     private List<QButton> optionButtons = new ArrayList<>();
-
 
     private BufferedReader in;
     private PrintWriter out;
@@ -44,8 +43,17 @@ public class GameClient implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         QButton clickedButton = (QButton) e.getSource();
         String selectedOption = clickedButton.getText();
+
         out.println(selectedOption);
         System.out.println("You clicked " + selectedOption); // For testing
+
+        if (selectedOption.equalsIgnoreCase(correctAnswer)) {
+            clickedButton.setBackground(Color.green);
+        } else {
+            System.out.println("From client: wrong");
+
+        }
+
     }
 
     private void setQuestionnairePanel() {
@@ -54,6 +62,7 @@ public class GameClient implements ActionListener {
             QButton optionButton = new QButton();
             optionButton.addActionListener(this);
             optionButtons.add(optionButton);
+            optionButton.setEnabled(false);
             questionnairePanel.add(optionButton);
         }
     }
@@ -88,25 +97,33 @@ public class GameClient implements ActionListener {
                 frame.setTitle("QuizClash: Player %S".formatted(response.substring(8)));
             }
             while (true) {
+                correctAnswer = null;
                 response = in.readLine();
                 if (response == null) {
                     instructionsLabel.setText("Waiting for server");
                     continue;
                 }
+                if (correctAnswer == null) {
+                    correctAnswer = response;
+                }
+
+                System.out.println("From client: " + correctAnswer);
 
                 if (response.startsWith("QUESTION")) {
+                    optionButtons.forEach(button -> button.setEnabled(true));
                     String[] questionData = response.substring(8).split("/");
                     String question = questionData[0];
                     String[] options = questionData[1].split(",");
                     instructionsLabel.setText("Choose an option");
                     questionLabel.setText(question);
-                    IntStream.range(0, optionButtons.size())
-                            .forEach(i -> optionButtons.get(i).setText(options[i]));
-                } else if (response.startsWith("OPPONENT_DONE")) {
-                    questionLabel.setText("");
-                    optionButtons.forEach(button -> button.setText(""));
+                    IntStream.range(0, optionButtons.size()).forEach(i -> optionButtons.get(i).setText(options[i]));
                 } else if (response.startsWith("MESSAGE")) {
                     instructionsLabel.setText(response.substring(8));
+                } else if (response.startsWith("ROUND_SCORE")) {
+                    instructionsLabel.setText(response.substring(12));
+                } else if (response.startsWith("WAITING")) {
+                    optionButtons.forEach(button -> button.setEnabled(false));
+                    instructionsLabel.setText("Waiting for other player");
                 } else if (response.startsWith("VICTORY")) {
                     instructionsLabel.setText(response);
                     break;

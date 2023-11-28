@@ -15,14 +15,6 @@ public class Question {
         this.correctAnswer = correctAnswer;
     }
 
-    public String getQuestion() {
-        return questionText;
-    }
-
-    public List<String> getOptions() {
-        return options;
-    }
-
     public String getCorrectAnswer() {
         return correctAnswer;
     }

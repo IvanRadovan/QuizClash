@@ -7,68 +7,66 @@ import java.util.Random;
 
 public class GameEngine {
 
-    private QuizQuestions questions;
-    private List<String> listOfCategories;
+    public QuizQuestions questions;
+    public List<String> listOfCategories;
     private String selectedCategory;
 
-    private int playerAScore;
-    private int playerBScore;
+    private int currentRound;
+    private final int totalRounds = 3;
 
-    private boolean playerADone;
-    private boolean playerBDone;
+    private int playerATotalScore;
+    private int playerBTotalScore;
 
-    private ServerSidePlayer currentPlayer;
+    private int playerARoundScore;
+    private int playerBRoundScore;
 
     public GameEngine() {
         questions = new QuizQuestions();
         listOfCategories = questions.getListOfCategories();
-        this.playerAScore = 0;
-        this.playerBScore = 0;
         selectRandomCategory();
     }
 
-    public ServerSidePlayer getCurrentPlayer() {
-        return currentPlayer;
+    public int getCurrentRound() {
+        return currentRound;
     }
-
-    public void setCurrentPlayer(ServerSidePlayer currentPlayer) {
-        this.currentPlayer = currentPlayer;
-    }
-
 
     public void addScore(String playerMark) {
-        if (playerMark.equals("A")) playerAScore++;
-        else playerBScore++;
-    }
-
-    public void isDone(String playerMark) {
-        if (playerMark.equals("A"))
-            playerADone = true;
-        else
-            playerBDone = true;
-    }
-
-    public boolean bothPlayerAreDone() {
-        return (playerADone && playerBDone);
+        if (playerMark.equals("A")) {
+            playerARoundScore++;
+            playerATotalScore++;
+        } else {
+            playerBTotalScore++;
+            playerBRoundScore++;
+        }
     }
 
     public boolean hasWinner() {
-        return playerAScore != playerBScore;
+        return playerATotalScore != playerBTotalScore;
+    }
+
+    public void nextRound() {
+        if (currentRound < totalRounds) {
+            currentRound++;
+            playerARoundScore = 0;
+            playerBRoundScore = 0;
+            selectRandomCategory();
+        }
+    }
+
+    public boolean isGameFinished() {
+        return currentRound >= totalRounds;
     }
 
     public boolean isWinner(String playerMark) {
         return playerMark.equals("A")
-                ? playerAScore > playerBScore
-                : playerBScore > playerAScore;
+                ? playerATotalScore > playerBTotalScore
+                : playerBTotalScore > playerATotalScore;
     }
-
-
 
     // den här kate
     public List<Question> getQuestions() {
         if (selectedCategory != null) {
             List<Question> randomQuestions = questions.getCategory(selectedCategory);
-            //String randomCategory = listOfCategories.get(new Random().nextInt(0, questions.getCategorySize()));
             Collections.shuffle(randomQuestions);
             return randomQuestions.stream().limit(3).toList();
         }
@@ -86,10 +84,21 @@ public class GameEngine {
         }
     }
 
-    public String getScore(String result, String playerMark) {
+    public String getCategoryName() {
+        return selectedCategory;
+    }
+
+    public String getTotalScore(String result, String playerMark) {
         return "%s Score: %s - %s".formatted(
                 result,
-                playerMark.equals("A") ? playerAScore : playerBScore,
-                playerMark.equals("A") ? playerBScore : playerAScore);
+                playerMark.equals("A") ? playerATotalScore : playerBTotalScore,
+                playerMark.equals("A") ? playerBTotalScore : playerATotalScore);
+    }
+
+    public String getRoundScore(String result, String playerMark) {
+        return "%s Score: %s - %s".formatted(
+                result,
+                playerMark.equals("A") ? playerARoundScore : playerBRoundScore,
+                playerMark.equals("A") ? playerBRoundScore : playerARoundScore);
     }
 }

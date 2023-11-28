@@ -16,15 +16,11 @@ public class Server {
 
                 GameEngine gameEngine = new GameEngine();
 
-                ServerSidePlayer serverSidePlayerA = new ServerSidePlayer(listener.accept(), gameEngine, "A");
-                ServerSidePlayer serverSidePlayerB = new ServerSidePlayer(listener.accept(), gameEngine, "B");
+                ServerSidePlayer serverSidePlayerA = new ServerSidePlayer(listener.accept(), "A");
+                ServerSidePlayer serverSidePlayerB = new ServerSidePlayer(listener.accept(), "B");
 
-                serverSidePlayerA.setOpponent(serverSidePlayerB);
-                serverSidePlayerB.setOpponent(serverSidePlayerA);
-                gameEngine.setCurrentPlayer(serverSidePlayerA);
-
-                serverSidePlayerA.start();
-                serverSidePlayerB.start();
+                Match match = new Match(serverSidePlayerA, serverSidePlayerB, gameEngine);
+                match.start();
             }
 
         } catch (IOException e) {
