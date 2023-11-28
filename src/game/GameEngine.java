@@ -19,6 +19,22 @@ public class GameEngine {
     private boolean playerADone;
     private boolean playerBDone;
 
+    public boolean isPlayerADone() {
+        return playerADone;
+    }
+
+    public void setPlayerADone(boolean playerADone) {
+        this.playerADone = playerADone;
+    }
+
+    public boolean isPlayerBDone() {
+        return playerBDone;
+    }
+
+    public void setPlayerBDone(boolean playerBDone) {
+        this.playerBDone = playerBDone;
+    }
+
     public int getCurrentRound() {
         return currentRound;
     }
@@ -47,6 +63,10 @@ public class GameEngine {
 
     public boolean bothPlayerAreDone() {
         return (playerADone && playerBDone);
+    }
+
+    public boolean bothPlayerNotDone() {
+        return (!playerADone && !playerBDone);
     }
 
     public boolean hasWinner() {

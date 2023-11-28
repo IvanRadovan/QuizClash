@@ -38,6 +38,12 @@ public class ServerSidePlayer extends Thread {
                 out.println("MESSAGE All players connected");
 
             while(gameEngine.getCurrentRound() < gameEngine.getTotalRounds()) {
+
+
+
+                gameEngine.setPlayerADone(false);
+                gameEngine.setPlayerBDone(false);
+
                 //System.out.println("Runda: " + gameEngine.getCurrentRound()+" "+playerMark);
                 List<Question> questions = gameEngine.getQuestions();
                 for (Question currentQuestion : questions) {
@@ -55,18 +61,24 @@ public class ServerSidePlayer extends Thread {
                 gameEngine.isDone(playerMark);
                 while (!gameEngine.bothPlayerAreDone()) {
 
-                        if (!gameEngine.isFinalRound()) {
-                            gameEngine.nextRound();
-                            System.out.println("runda" + gameEngine.getCurrentRound() + playerMark);
-                        }
                     // Will also resolve the "locking" of the waiting players instructions (not showing the result)
                     try {
-                        TimeUnit.SECONDS.sleep(1);
+                        //TimeUnit.SECONDS.sleep(1);
+                        Thread.sleep(100);
                         out.println("MESSAGE Waiting for other player");
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                 }
+                       while(gameEngine.bothPlayerAreDone()) {
+                           if (!gameEngine.isFinalRound()) {
+                               gameEngine.nextRound();
+                               System.out.println("runda" + gameEngine.getCurrentRound() + playerMark);
+                               gameEngine.setPlayerADone(false);
+                               gameEngine.setPlayerBDone(false);
+                           }
+                           break;
+                       }
             }
 
             out.println(gameEngine.hasWinner()
