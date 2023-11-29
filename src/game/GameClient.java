@@ -128,8 +128,8 @@ public class GameClient implements ActionListener {
         String[] options = {"Yes", "No"};
         int result = JOptionPane.showOptionDialog(
                 null,
-                "Do you want to proceed?",
-                "Confirmation Player" + response.substring(11),
+                "Play again?",
+                "Confirmation Player " + response.substring(11),
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
