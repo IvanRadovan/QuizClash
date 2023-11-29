@@ -1,7 +1,10 @@
 package game;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 
 public class GameEngine {
@@ -11,8 +14,7 @@ public class GameEngine {
     private String selectedCategory;
 
     private int currentRound;
-    private static final int TOTAL_ROUNDS = 3;
-    private static final int QUESTIONS_PER_ROUND = 3;
+
     private static final String PLAYER_MARK_A = "A";
 
     private int playerATotalScore;
@@ -21,11 +23,26 @@ public class GameEngine {
     private int playerARoundScore;
     private int playerBRoundScore;
 
+
+
     public GameEngine() {
         questions = new QuizQuestions();
         listOfCategories = questions.getListOfCategories();
         selectRandomCategory();
     }
+    private static Properties properties = new Properties();
+    static {
+        try (InputStream input = GameEngine.class.getClassLoader().getResourceAsStream("game.properties")) {
+            if (input != null) {
+                properties.load(input);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static final int QUESTIONS_PER_ROUND = Integer.parseInt(properties.getProperty("QUESTIONS_PER_ROUND", "3"));
+    private static final int TOTAL_ROUNDS = Integer.parseInt(properties.getProperty("TOTAL_ROUNDS", "2"));
 
     public int getCurrentRound() {
         return currentRound;

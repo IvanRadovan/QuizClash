@@ -29,6 +29,9 @@ public class GameClient implements ActionListener {
     private PrintWriter out;
     private Socket socket;
 
+
+
+
     public GameClient() throws IOException {
         socket = new Socket("localhost", 9999);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
