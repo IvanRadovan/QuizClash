@@ -94,19 +94,7 @@ public class GameClient implements ActionListener {
                 }
 
                 if (response.startsWith("QUESTION")) {
-                    optionButtons.forEach(button -> button.setEnabled(true));
-                    String category = response.substring(9, response.indexOf("#"));
-                    String[] questionData = response.substring(response.indexOf("#") + 1).split("/");
-                    String question = questionData[0];
-
-                    String[] options = questionData[1].split(",");
-                    List<String> shuffledOptions = Arrays.asList(options);
-                    Collections.shuffle(shuffledOptions);
-
-                    instructionsLabel.setText("%S | Choose an option".formatted(category));
-                    questionLabel.setText(question);
-                    IntStream.range(0, optionButtons.size()).forEach(i -> optionButtons.get(i).setText(options[i]));
-
+                    displayQuestions(response);
                 } else if (response.startsWith("MESSAGE")) {
                     instructionsLabel.setText(response.substring(8));
                 } else if (response.startsWith("ROUND_SCORE")) {
@@ -125,17 +113,7 @@ public class GameClient implements ActionListener {
                 } else if (response.startsWith("WRONG")) {
                     highlightButtonWithColor(response, 6, Color.RED);
                 } else if (response.startsWith("PLAY_AGAIN")) {
-                    Object[] options = {"Yes", "No"};
-                    int result = JOptionPane.showOptionDialog(
-                            null,
-                            "Do you want to proceed?",
-                            "Confirmation Player" + response.substring(11),
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE,
-                            null,
-                            options,
-                            options[0]);
-                    out.println(result == JOptionPane.YES_OPTION ? "NEW_GAME" : "FINISH");
+                    showPlayAgainOption(response);
                 } else if (response.startsWith("QUIT")) {
                     break;
                 }
@@ -144,6 +122,36 @@ public class GameClient implements ActionListener {
         } finally {
             socket.close();
         }
+    }
+
+    private void showPlayAgainOption(String response) {
+        String[] options = {"Yes", "No"};
+        int result = JOptionPane.showOptionDialog(
+                null,
+                "Do you want to proceed?",
+                "Confirmation Player" + response.substring(11),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        out.println(result == JOptionPane.YES_OPTION ? "NEW_GAME" : "FINISH");
+    }
+
+    private void displayQuestions(String response) {
+        optionButtons.forEach(button -> button.setEnabled(true));
+        String category = response.substring(9, response.indexOf("#"));
+        String[] questionData = response.substring(response.indexOf("#") + 1).split("/");
+        String question = questionData[0];
+
+        String[] options = questionData[1].split(",");
+        List<String> shuffledOptions = Arrays.asList(options);
+        Collections.shuffle(shuffledOptions);
+
+        instructionsLabel.setText("%S | Choose an option".formatted(category));
+        questionLabel.setText(question);
+        IntStream.range(0, optionButtons.size()).forEach(i -> optionButtons.get(i).setText(options[i]));
     }
 
     private void highlightButtonWithColor(String response, int beginningIndex, Color color) {
