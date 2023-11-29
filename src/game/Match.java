@@ -23,9 +23,7 @@ public class Match extends Thread {
         }
     }
 
-
     public void run() {
-
         while (true) {
             while (!gameEngine.isGameFinished()) {
                 sendCurrentRound(playerA);
