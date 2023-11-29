@@ -17,7 +17,6 @@ public class GameEngine {
     private static final String PLAYER_MARK_A = "A";
 
     private static Properties properties = new Properties();
-
     static {
         try (InputStream input = GameEngine.class.getClassLoader().getResourceAsStream("game.properties")) {
             if (input != null) {
@@ -68,6 +67,12 @@ public class GameEngine {
             playerBRoundScore = 0;
             selectRandomCategory();
         }
+    }
+
+    public void playAgain() {
+        playerATotalScore = 0;
+        playerBTotalScore = 0;
+        currentRound = 0;
     }
 
     public boolean isGameFinished() {

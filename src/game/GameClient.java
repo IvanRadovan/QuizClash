@@ -30,6 +30,7 @@ public class GameClient implements ActionListener {
     private PrintWriter out;
     private Socket socket;
 
+
     public GameClient() throws IOException {
         socket = new Socket("localhost", 9999);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -124,8 +125,30 @@ public class GameClient implements ActionListener {
                     highlightButtonWithColor(response, 8, Color.GREEN);
                 } else if (response.startsWith("WRONG")) {
                     highlightButtonWithColor(response, 6, Color.RED);
+                } else if (response.startsWith("PLAY_AGAIN")) {
+
+                    Object[] options = {"Yes", "No"};
+
+                    int result = JOptionPane.showOptionDialog(
+                            null,                   // parent component
+                            "Do you want to proceed?", // message
+                            "Confirmation Player" + response.substring(11),        // title
+                            JOptionPane.YES_NO_OPTION, // option type
+                            JOptionPane.QUESTION_MESSAGE, // message type
+                            null,                   // icon (null for default icon)
+                            options,                // options
+                            options[0]);            // default option
+
+                    if (result == JOptionPane.YES_OPTION) {
+                        out.println("NEW_GAME");
+                    } else {
+                        out.println("FINISH");
+                    }
+                } else if (response.startsWith("QUIT")) {
+                    break;
                 }
             }
+            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
         } finally {
             socket.close();
         }
