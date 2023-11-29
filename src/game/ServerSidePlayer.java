@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class ServerSidePlayer extends Thread {
+public class ServerSidePlayer {
 
     BufferedReader in;
     PrintWriter out;

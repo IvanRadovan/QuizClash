@@ -14,23 +14,10 @@ public class GameEngine {
     private String selectedCategory;
 
     private int currentRound;
-
     private static final String PLAYER_MARK_A = "A";
 
-    private int playerATotalScore;
-    private int playerBTotalScore;
-
-    private int playerARoundScore;
-    private int playerBRoundScore;
-
-
-
-    public GameEngine() {
-        questions = new QuizQuestions();
-        listOfCategories = questions.getListOfCategories();
-        selectRandomCategory();
-    }
     private static Properties properties = new Properties();
+
     static {
         try (InputStream input = GameEngine.class.getClassLoader().getResourceAsStream("game.properties")) {
             if (input != null) {
@@ -41,8 +28,20 @@ public class GameEngine {
         }
     }
 
-    private static final int QUESTIONS_PER_ROUND = Integer.parseInt(properties.getProperty("QUESTIONS_PER_ROUND", "3"));
-    private static final int TOTAL_ROUNDS = Integer.parseInt(properties.getProperty("TOTAL_ROUNDS", "2"));
+    private static final int QUESTIONS_PER_ROUND = Integer.parseInt(properties.getProperty("QUESTIONS_PER_ROUND"));
+    private static final int TOTAL_ROUNDS = Integer.parseInt(properties.getProperty("TOTAL_ROUNDS"));
+
+    private int playerATotalScore;
+    private int playerBTotalScore;
+
+    private int playerARoundScore;
+    private int playerBRoundScore;
+
+    public GameEngine() {
+        questions = new QuizQuestions();
+        listOfCategories = questions.getListOfCategories();
+        selectRandomCategory();
+    }
 
     public int getCurrentRound() {
         return currentRound;

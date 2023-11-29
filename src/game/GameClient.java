@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,9 +29,6 @@ public class GameClient implements ActionListener {
     private BufferedReader in;
     private PrintWriter out;
     private Socket socket;
-
-
-
 
     public GameClient() throws IOException {
         socket = new Socket("localhost", 9999);
@@ -118,13 +116,10 @@ public class GameClient implements ActionListener {
                     instructionsLabel.setText("Waiting for other player");
                 } else if (response.startsWith("VICTORY")) {
                     instructionsLabel.setText(response);
-                    break;
                 } else if (response.startsWith("TIE")) {
                     instructionsLabel.setText(response);
-                    break;
                 } else if (response.startsWith("LOSE")) {
                     instructionsLabel.setText(response);
-                    break;
                 } else if (response.startsWith("CORRECT")) {
                     highlightButtonWithColor(response, 8, Color.GREEN);
                 } else if (response.startsWith("WRONG")) {

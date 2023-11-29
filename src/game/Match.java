@@ -10,11 +10,10 @@ public class Match extends Thread {
     ServerSidePlayer playerB;
     GameEngine gameEngine;
 
-    public Match(ServerSidePlayer playerA, ServerSidePlayer playerB, GameEngine gameEngine) {
+    public Match(ServerSidePlayer playerA, ServerSidePlayer playerB) {
         try {
             this.playerA = playerA;
             this.playerB = playerB;
-            this.gameEngine = gameEngine;
 
             playerA.out.println("WELCOME " + playerA.getPlayerMark());
             playerB.out.println("WELCOME " + playerB.getPlayerMark());

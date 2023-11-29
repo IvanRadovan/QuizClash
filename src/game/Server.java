@@ -11,12 +11,9 @@ public class Server {
             System.out.println("Serving is running and waiting for connections...");
 
             while (true) {
-                GameEngine gameEngine = new GameEngine();
-
-                ServerSidePlayer serverSidePlayerA = new ServerSidePlayer(listener.accept(), "A");
-                ServerSidePlayer serverSidePlayerB = new ServerSidePlayer(listener.accept(), "B");
-
-                Match match = new Match(serverSidePlayerA, serverSidePlayerB, gameEngine);
+                Match match = new Match(
+                        new ServerSidePlayer(listener.accept(), "A"),
+                        new ServerSidePlayer(listener.accept(), "B"));
                 match.start();
             }
         } catch (IOException e) {

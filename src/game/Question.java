@@ -19,10 +19,6 @@ public class Question {
         return correctAnswer;
     }
 
-    public List<String> getOptions() {
-        return options;
-    }
-
     @Override
     public String toString() {
         final char SPLIT_MARKER = '/';
