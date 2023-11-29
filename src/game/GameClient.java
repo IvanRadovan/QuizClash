@@ -125,24 +125,17 @@ public class GameClient implements ActionListener {
                 } else if (response.startsWith("WRONG")) {
                     highlightButtonWithColor(response, 6, Color.RED);
                 } else if (response.startsWith("PLAY_AGAIN")) {
-
                     Object[] options = {"Yes", "No"};
-
                     int result = JOptionPane.showOptionDialog(
-                            null,                   // parent component
-                            "Do you want to proceed?", // message
-                            "Confirmation Player" + response.substring(11),        // title
-                            JOptionPane.YES_NO_OPTION, // option type
-                            JOptionPane.QUESTION_MESSAGE, // message type
-                            null,                   // icon (null for default icon)
-                            options,                // options
-                            options[0]);            // default option
-
-                    if (result == JOptionPane.YES_OPTION) {
-                        out.println("NEW_GAME");
-                    } else {
-                        out.println("FINISH");
-                    }
+                            null,
+                            "Do you want to proceed?",
+                            "Confirmation Player" + response.substring(11),
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,
+                            options[0]);
+                    out.println(result == JOptionPane.YES_OPTION ? "NEW_GAME" : "FINISH");
                 } else if (response.startsWith("QUIT")) {
                     break;
                 }
