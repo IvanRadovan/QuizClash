@@ -10,52 +10,65 @@ public class QuizQuestions {
     private Map<String, List<Question>> listCategory = new HashMap<>();
 
     public QuizQuestions() {
-        listCategory.put("Geography", getGeographyQuestions());
+        listCategory.put("Sport", getSportQuestions());
         listCategory.put("Space", getSpaceQuestions());
-        //listCategory.put("Sport", getSportQuestions());
-    }
-
-    public List<Question> getGeographyQuestions() {
-
-        List<Question> list = new ArrayList<>();
-
-        List<String> options1 = List.of("Paris", "London", "Berlin", "Madrid");
-        Question question1 = new Question("What is the capital of France?", options1, "Paris");
-        list.add(question1);
-
-        List<String> options2 = List.of("Mars", "Jupiter", "Venus", "Mercury");
-        Question question2 = new Question("Which planet is known as the Red Planet?", options2, "Mars");
-        list.add(question2);
-
-        return list;
     }
 
     public List<Question> getSpaceQuestions() {
-
         List<Question> list = new ArrayList<>();
 
-        List<String> options1 = List.of("Paris", "London", "Berlin", "Madrid");
-        Question question1 = new Question("What is the capital of France?", options1, "Paris");
-        list.add(question1);
+        createQuestion(List.of("Earth", "Saturn ", "Mars", "Jupiter"),
+                "What is the largest planet in our solar system?",
+                "Jupiter", list);
 
-        List<String> options2 = List.of("Mars", "Jupiter", "Venus", "Mercury");
-        Question question2 = new Question("Which planet is known as the Red Planet?", options2, "Mars");
-        list.add(question2);
+        createQuestion(List.of("Milky Way", "Sombrero", "Andromeda", "Triangulum"),
+                "Which galaxy is home to our solar system?",
+                "Milky Way", list);
+
+        createQuestion(List.of("Sputnik 1", "Hubble", "Explorer 1", "Vanguard 1"),
+                "What is the name of the first artificial satellite launched into space?",
+                "Sputnik 1", list);
+
+        createQuestion(List.of("Jupiter", "Mars", "Venus", "Earth"),
+                "Which planet is known as the \"Red Planet\"?",
+                "Mars", list);
+
+        createQuestion(List.of("Proxima Centauri", "Alpha Centauri A", "Sirius", "Betelgeuse"),
+                "What is the name of the closest star to Earth?",
+                "Proxima Centauri", list);
 
         return list;
     }
 
     public List<Question> getSportQuestions() {
         List<Question> list = new ArrayList<>();
-        List<String> options1 = List.of("Tennis", "Football", "Basket", "Hockey");
-        Question question1 = new Question("Something sport....", options1, "Tennis");
-        list.add(question1);
 
-        List<String> options2 = List.of("Tennis", "Football", "Basket", "Hockey");
-        Question question2 = new Question("Something sport....", options2, "Tennis");
-        list.add(question2);
+        createQuestion(List.of("United States", "Canada", "Brazil", "Australia"),
+                "In which country did the sport of basketball originate?",
+                "United States", list);
+
+        createQuestion(List.of("Mike Tyson", "Muhammad Ali", "Floyd Mayweather", "Manny Pacquiao"),
+                "Who is often referred to as \"The Greatest\" in the sport of boxing?",
+                "Muhammad Ali", list);
+
+        createQuestion(List.of("Beijing", "Rio de Janeiro", "London", "Sydney"),
+                "Which city hosted the 2016 Summer Olympics?",
+                "Rio de Janeiro", list);
+
+        createQuestion(List.of("8", "10", "11", "12"),
+                "In soccer, what is the maximum number of players a team can have on the field during a match?",
+                "11", list);
+
+        createQuestion(List.of("England", "South Africa", "Australia", "India"),
+                "Which country is famous for its dominance in the sport of cricket?",
+                "India", list);
 
         return list;
+    }
+
+    private void createQuestion(List<String> options, String question, String correctAnswer, List<Question> list) {
+        Question question5 = new Question(question, options, correctAnswer);
+        list.add(question5);
     }
 
     public List<Question> getCategory(String category) {

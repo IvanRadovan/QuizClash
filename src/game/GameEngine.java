@@ -63,25 +63,19 @@ public class GameEngine {
                 : playerBTotalScore > playerATotalScore;
     }
 
-    // den här kate
     public List<Question> getQuestions() {
-        if (selectedCategory != null) {
-            List<Question> randomQuestions = questions.getCategory(selectedCategory);
-            Collections.shuffle(randomQuestions);
-            return randomQuestions.stream().limit(3).toList();
-        }
-        return new ArrayList<>();
+        List<Question> randomQuestions = questions.getCategory(selectedCategory);
+        Collections.shuffle(randomQuestions);
+        return randomQuestions
+                .stream()
+                .limit(3)
+                .toList();
     }
 
-    //Ny metod för att välja en random från början
-    //Den väljer bara en kategori om den int
     private void selectRandomCategory() {
-        if (!listOfCategories.isEmpty()) {
-            Random random = new Random();
-            selectedCategory = listOfCategories.get(random.nextInt(listOfCategories.size()));
-        } else {
-            selectedCategory = null;
-        }
+        Random random = new Random();
+        selectedCategory = listOfCategories.get(random.nextInt(listOfCategories.size()));
+
     }
 
     public String getCategoryName() {
@@ -89,15 +83,13 @@ public class GameEngine {
     }
 
     public String getTotalScore(String result, String playerMark) {
-        return "%s Score: %s - %s".formatted(
-                result,
+        return "%s Total Score: %s - %s".formatted(result,
                 playerMark.equals("A") ? playerATotalScore : playerBTotalScore,
                 playerMark.equals("A") ? playerBTotalScore : playerATotalScore);
     }
 
     public String getRoundScore(String result, String playerMark) {
-        return "%s Score: %s - %s".formatted(
-                result,
+        return "%s Round Score: %s - %s".formatted(result,
                 playerMark.equals("A") ? playerARoundScore : playerBRoundScore,
                 playerMark.equals("A") ? playerBRoundScore : playerARoundScore);
     }

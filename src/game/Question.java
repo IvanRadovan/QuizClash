@@ -19,10 +19,14 @@ public class Question {
         return correctAnswer;
     }
 
+    public List<String> getOptions() {
+        return options;
+    }
+
     @Override
     public String toString() {
         final char SPLIT_MARKER = '/';
-        final String allOptions = options.stream()
+        String allOptions = options.stream()
                 .map(option -> option.concat(","))
                 .collect(Collectors.joining());
 

@@ -4,13 +4,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 public class GameClient implements ActionListener {
@@ -20,13 +25,11 @@ public class GameClient implements ActionListener {
 
     private JLabel questionLabel = new JLabel();
     private JPanel questionnairePanel = new JPanel();
-    private String correctAnswer;
     private List<QButton> optionButtons = new ArrayList<>();
 
     private BufferedReader in;
     private PrintWriter out;
     private Socket socket;
-
 
     public GameClient() throws IOException {
         socket = new Socket("localhost", 9999);
@@ -38,22 +41,11 @@ public class GameClient implements ActionListener {
         setFrame();
     }
 
-
     @Override
     public void actionPerformed(ActionEvent e) {
         QButton clickedButton = (QButton) e.getSource();
         String selectedOption = clickedButton.getText();
-
         out.println(selectedOption);
-        System.out.println("You clicked " + selectedOption); // For testing
-
-        if (selectedOption.equalsIgnoreCase(correctAnswer)) {
-            clickedButton.setBackground(Color.green);
-        } else {
-            System.out.println("From client: wrong");
-
-        }
-
     }
 
     private void setQuestionnairePanel() {
@@ -85,38 +77,36 @@ public class GameClient implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-
     public void play() throws IOException {
         String response;
-
         try {
             response = in.readLine();
-            System.out.println(response);
             if (response.startsWith("WELCOME")) {
                 instructionsLabel.setText(response);
                 frame.setTitle("QuizClash: Player %S".formatted(response.substring(8)));
             }
+
             while (true) {
-                correctAnswer = null;
                 response = in.readLine();
                 if (response == null) {
                     instructionsLabel.setText("Waiting for server");
                     continue;
                 }
-                if (correctAnswer == null) {
-                    correctAnswer = response;
-                }
-
-                System.out.println("From client: " + correctAnswer);
 
                 if (response.startsWith("QUESTION")) {
                     optionButtons.forEach(button -> button.setEnabled(true));
-                    String[] questionData = response.substring(8).split("/");
+                    String category = response.substring(9, response.indexOf("#"));
+                    String[] questionData = response.substring(response.indexOf("#") + 1).split("/");
                     String question = questionData[0];
+
                     String[] options = questionData[1].split(",");
-                    instructionsLabel.setText("Choose an option");
+                    List<String> shuffledOptions = Arrays.asList(options);
+                    Collections.shuffle(shuffledOptions);
+
+                    instructionsLabel.setText("%S | Choose an option".formatted(category));
                     questionLabel.setText(question);
                     IntStream.range(0, optionButtons.size()).forEach(i -> optionButtons.get(i).setText(options[i]));
+
                 } else if (response.startsWith("MESSAGE")) {
                     instructionsLabel.setText(response.substring(8));
                 } else if (response.startsWith("ROUND_SCORE")) {
@@ -133,6 +123,10 @@ public class GameClient implements ActionListener {
                 } else if (response.startsWith("LOSE")) {
                     instructionsLabel.setText(response);
                     break;
+                } else if (response.startsWith("CORRECT")) {
+                    highlightButtonWithColor(response, 8, Color.GREEN);
+                } else if (response.startsWith("WRONG")) {
+                    highlightButtonWithColor(response, 6, Color.RED);
                 }
             }
         } finally {
@@ -140,6 +134,20 @@ public class GameClient implements ActionListener {
         }
     }
 
+    private void highlightButtonWithColor(String response, int beginningIndex, Color color) {
+        String option = response.substring(beginningIndex);
+        QButton clickedButton = optionButtons.stream()
+                .filter(button -> button.getText().equals(option))
+                .findAny()
+                .orElseThrow();
+        clickedButton.setBackground(color);
+        try {
+            TimeUnit.MILLISECONDS.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        clickedButton.setBackground(null);
+    }
 
     class QButton extends JButton {
         public QButton() {
