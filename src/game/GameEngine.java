@@ -1,6 +1,5 @@
 package game;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -12,7 +11,9 @@ public class GameEngine {
     private String selectedCategory;
 
     private int currentRound;
-    private final int totalRounds = 3;
+    private static final int TOTAL_ROUNDS = 3;
+    private static final int QUESTIONS_PER_ROUND = 3;
+    private static final String PLAYER_MARK_A = "A";
 
     private int playerATotalScore;
     private int playerBTotalScore;
@@ -31,7 +32,7 @@ public class GameEngine {
     }
 
     public void addScore(String playerMark) {
-        if (playerMark.equals("A")) {
+        if (playerMark.equals(PLAYER_MARK_A)) {
             playerARoundScore++;
             playerATotalScore++;
         } else {
@@ -45,7 +46,7 @@ public class GameEngine {
     }
 
     public void nextRound() {
-        if (currentRound < totalRounds) {
+        if (currentRound < TOTAL_ROUNDS) {
             currentRound++;
             playerARoundScore = 0;
             playerBRoundScore = 0;
@@ -54,11 +55,11 @@ public class GameEngine {
     }
 
     public boolean isGameFinished() {
-        return currentRound >= totalRounds;
+        return currentRound >= TOTAL_ROUNDS;
     }
 
     public boolean isWinner(String playerMark) {
-        return playerMark.equals("A")
+        return playerMark.equals(PLAYER_MARK_A)
                 ? playerATotalScore > playerBTotalScore
                 : playerBTotalScore > playerATotalScore;
     }
@@ -66,16 +67,14 @@ public class GameEngine {
     public List<Question> getQuestions() {
         List<Question> randomQuestions = questions.getCategory(selectedCategory);
         Collections.shuffle(randomQuestions);
-        return randomQuestions
-                .stream()
-                .limit(3)
+        return randomQuestions.stream()
+                .limit(QUESTIONS_PER_ROUND)
                 .toList();
     }
 
     private void selectRandomCategory() {
         Random random = new Random();
         selectedCategory = listOfCategories.get(random.nextInt(listOfCategories.size()));
-
     }
 
     public String getCategoryName() {
@@ -84,13 +83,13 @@ public class GameEngine {
 
     public String getTotalScore(String result, String playerMark) {
         return "%s Total Score: %s - %s".formatted(result,
-                playerMark.equals("A") ? playerATotalScore : playerBTotalScore,
-                playerMark.equals("A") ? playerBTotalScore : playerATotalScore);
+                playerMark.equals(PLAYER_MARK_A) ? playerATotalScore : playerBTotalScore,
+                playerMark.equals(PLAYER_MARK_A) ? playerBTotalScore : playerATotalScore);
     }
 
     public String getRoundScore(String result, String playerMark) {
         return "%s Round Score: %s - %s".formatted(result,
-                playerMark.equals("A") ? playerARoundScore : playerBRoundScore,
-                playerMark.equals("A") ? playerBRoundScore : playerARoundScore);
+                playerMark.equals(PLAYER_MARK_A) ? playerARoundScore : playerBRoundScore,
+                playerMark.equals(PLAYER_MARK_A) ? playerBRoundScore : playerARoundScore);
     }
 }

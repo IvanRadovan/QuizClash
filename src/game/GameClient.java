@@ -4,8 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,8 +21,8 @@ public class GameClient implements ActionListener {
     private JFrame frame = new JFrame();
     private JLabel instructionsLabel = new JLabel("Waiting for opponent to connect...");
 
-    private JLabel questionLabel = new JLabel();
     private JPanel questionnairePanel = new JPanel();
+    private JLabel questionLabel = new JLabel();
     private List<QButton> optionButtons = new ArrayList<>();
 
     private BufferedReader in;
@@ -37,7 +35,7 @@ public class GameClient implements ActionListener {
         out = new PrintWriter(socket.getOutputStream(), true);
 
         setQuestionnairePanel();
-        setQuestionArea();
+        setQuestionLabel();
         setFrame();
     }
 
@@ -59,9 +57,10 @@ public class GameClient implements ActionListener {
         }
     }
 
-    private void setQuestionArea() {
+    private void setQuestionLabel() {
         questionLabel.setHorizontalAlignment(SwingConstants.CENTER);
         questionLabel.setVerticalAlignment(SwingConstants.CENTER);
+        questionLabel.setPreferredSize(new Dimension(700, 75));
         questionLabel.setText("Question goes here...");
     }
 
@@ -70,7 +69,7 @@ public class GameClient implements ActionListener {
         frame.getContentPane().add(questionnairePanel, BorderLayout.CENTER);
         frame.getContentPane().add(instructionsLabel, BorderLayout.SOUTH);
 
-        frame.setSize(500, 300);
+        frame.setSize(700, 300);
         frame.setVisible(true);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
@@ -138,7 +137,7 @@ public class GameClient implements ActionListener {
         String option = response.substring(beginningIndex);
         QButton clickedButton = optionButtons.stream()
                 .filter(button -> button.getText().equals(option))
-                .findAny()
+                .findFirst()
                 .orElseThrow();
         clickedButton.setBackground(color);
         try {

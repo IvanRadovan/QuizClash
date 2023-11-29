@@ -1,7 +1,6 @@
 package game;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -80,8 +79,7 @@ public class Match extends Thread {
     }
 
     private void sendTotalScore(ServerSidePlayer player) {
-        player.out.println(gameEngine.hasWinner()
-                ? gameEngine.isWinner(player.playerMark)
+        player.out.println(gameEngine.hasWinner() ? gameEngine.isWinner(player.playerMark)
                 ? gameEngine.getTotalScore("VICTORY ", player.playerMark)
                 : gameEngine.getTotalScore("LOSE ", player.playerMark)
                 : gameEngine.getTotalScore("TIE ", player.playerMark));
