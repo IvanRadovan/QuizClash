@@ -14,6 +14,7 @@ public class Match extends Thread {
         try {
             this.playerA = playerA;
             this.playerB = playerB;
+            this.gameEngine = new GameEngine();
 
             playerA.out.println("WELCOME " + playerA.getPlayerMark());
             playerB.out.println("WELCOME " + playerB.getPlayerMark());
@@ -24,34 +25,49 @@ public class Match extends Thread {
 
 
     public void run() {
-        while (!gameEngine.isGameFinished()) {
-            sendCurrentRound(playerA);
-            sendCurrentRound(playerB);
+        while (true) {
+            while (!gameEngine.isGameFinished()) {
+                sendCurrentRound(playerA);
+                sendCurrentRound(playerB);
 
-            try {
-                TimeUnit.SECONDS.sleep(2);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                List<Question> questions = gameEngine.getQuestions();
+
+                sendRoundExecutor(playerA, questions);
+                sendRoundExecutor(playerB, questions);
+
+                sendRoundScore(playerA);
+                sendRoundScore(playerB);
+
+                try {
+                    TimeUnit.SECONDS.sleep(3);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                gameEngine.nextRound();
             }
+            sendTotalScore(playerA);
+            sendTotalScore(playerB);
 
-            List<Question> questions = gameEngine.getQuestions();
+            sendPlayAgain(playerA);
+            sendPlayAgain(playerB);
 
-            sendRoundExecutor(playerA, questions);
-            sendRoundExecutor(playerB, questions);
-
-            sendRoundScore(playerA);
-            sendRoundScore(playerB);
-
-            try {
-                TimeUnit.SECONDS.sleep(3);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            if (!playAgain(playerA) || !playAgain(playerB)) {
+                playerA.out.println("QUIT");
+                playerB.out.println("QUIT");
+                break;
             }
+            gameEngine.playAgain();
 
-            gameEngine.nextRound();
         }
-        sendTotalScore(playerA);
-        sendTotalScore(playerB);
+
     }
 
     private void sendRoundExecutor(ServerSidePlayer player, List<Question> questions) {
@@ -87,4 +103,18 @@ public class Match extends Thread {
     private void sendCurrentRound(ServerSidePlayer player) {
         player.out.println("MESSAGE Round: " + (gameEngine.getCurrentRound() + 1));
     }
+    private void sendPlayAgain(ServerSidePlayer player) {
+        player.out.println("PLAY_AGAIN " + player.playerMark);
+    }
+
+    private boolean playAgain(ServerSidePlayer player) {
+        String messageReceived;
+        try {
+            messageReceived = player.in.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return !messageReceived.equals("FINISH");
+    }
+
 }

@@ -124,8 +124,31 @@ public class GameClient implements ActionListener {
                     highlightButtonWithColor(response, 8, Color.GREEN);
                 } else if (response.startsWith("WRONG")) {
                     highlightButtonWithColor(response, 6, Color.RED);
+                } else if (response.startsWith("PLAY_AGAIN")) {
+
+                Object[] options = {"Yes", "No"};
+
+                int result = JOptionPane.showOptionDialog(
+                        null,
+                        "Do you want to proceed?",
+                        "Confirmation Player" + response.substring(11),
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[0]);
+
+                if (result == JOptionPane.YES_OPTION) {
+                    out.println("NEW_GAME");
+                } else {
+                    out.println("FINISH");
                 }
+            } else if (response.startsWith("QUIT")) {
+                break;
             }
+        }
+        frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+
         } finally {
             socket.close();
         }

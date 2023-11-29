@@ -70,6 +70,13 @@ public class GameEngine {
         }
     }
 
+    public void playAgain() {
+        playerATotalScore = 0;
+        playerBTotalScore = 0;
+        currentRound = 0;
+    }
+
+
     public boolean isGameFinished() {
         return currentRound >= TOTAL_ROUNDS;
     }
